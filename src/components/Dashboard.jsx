@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
-import { BACKEND_URL, resolveImageUrl as resolveImage, isVideoMedia } from "../config";
+import { BACKEND_URL, resolveImageUrl as resolveImage } from "../config";
 import {
   DEFAULT_CATEGORIES,
   getSavedCustomCategories,
@@ -433,9 +433,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
   };
 
   const handleDeletePhoto = async (id) => {
-    const targetItem = photos.find((p) => p.id === id);
-    const itemType = isVideoMedia(targetItem) ? "video" : "photo";
-    if (!window.confirm(`Are you sure you want to delete this ${itemType}?`)) return;
+    if (!window.confirm("Are you sure you want to delete this photo?")) return;
     if (token) {
       try {
         await fetch(`${BACKEND_URL}/api/photos/${id}`, {
@@ -637,19 +635,6 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                     <span className="nd-folder-name" title={cat}>{cat}</span>
                     {count > 0 && <span className="nd-folder-count-pill">{count}</span>}
                   </button>
-                  {cat.toLowerCase() !== "my photos" && (
-                    <button
-                      type="button"
-                      className="nd-sidebar-folder-del-btn"
-                      title={`Delete folder "${cat}"`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRequestDeleteFolder(cat);
-                      }}
-                    >
-                      ✕
-                    </button>
-                  )}
                 </div>
               );
             })}
@@ -894,31 +879,17 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                     {allCategories.map((cat) => {
                       const isSelected = selectedFilter.toLowerCase() === cat.toLowerCase();
                       return (
-                        <div key={cat} className="nd-filter-option-row">
-                          <button
-                            className={`nd-filter-option ${isSelected ? "nd-filter-option--active" : ""}`}
-                            onClick={() => {
-                              setSelectedFilter(cat);
-                              setFilterDropdownOpen(false);
-                            }}
-                            type="button"
-                          >
-                            {cat}
-                          </button>
-                          {cat.toLowerCase() !== "my photos" && (
-                            <button
-                              className="nd-filter-remove-cat-btn"
-                              title={`Delete folder "${cat}"`}
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onRequestDeleteFolder(cat);
-                              }}
-                            >
-                              🗑️
-                            </button>
-                          )}
-                        </div>
+                        <button
+                          key={cat}
+                          className={`nd-filter-option ${isSelected ? "nd-filter-option--active" : ""}`}
+                          onClick={() => {
+                            setSelectedFilter(cat);
+                            setFilterDropdownOpen(false);
+                          }}
+                          type="button"
+                        >
+                          {cat}
+                        </button>
                       );
                     })}
 
@@ -1011,9 +982,9 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                 <div className="nd-empty-icon">
                   <PhotoKeeperMascot size={72} />
                 </div>
-                <h3>Your Media Gallery is Empty</h3>
+                <h3>Your Photo Gallery is Empty</h3>
                 <p>
-                  Upload your first photo or video to start your dynamic gallery. Your media will automatically organize into
+                  Upload your first photo to start your dynamic gallery. Your photos will automatically organize into
                   custom albums and categories.
                 </p>
                 <button
@@ -1025,7 +996,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                   }}
                   type="button"
                 >
-                  ➕ Upload Photo or Video
+                  ➕ Upload Your First Photo
                 </button>
               </div>
             ) : filteredAlbums.length === 0 ? (
@@ -1118,26 +1089,12 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                             className="nd-feature-card"
                             onClick={() => openPhotoModal(featured)}
                           >
-                            {isVideoMedia(featured) ? (
-                              <div className="nd-card-media-wrap">
-                                <video
-                                  src={featured.image}
-                                  className="nd-card-img nd-card-video"
-                                  autoPlay
-                                  loop
-                                  muted
-                                  playsInline
-                                />
-                                <span className="nd-video-badge">▶ Video</span>
-                              </div>
-                            ) : (
-                              <img
-                                src={featured.image}
-                                alt={featured.title}
-                                className="nd-card-img"
-                                loading="lazy"
-                              />
-                            )}
+                            <img
+                              src={featured.image}
+                              alt={featured.title}
+                              className="nd-card-img"
+                              loading="lazy"
+                            />
                             <div className="nd-card-overlay">
                               <span className="nd-card-title">{featured.title}</span>
                               <button
@@ -1155,44 +1112,18 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                         {/* 2. Small Thumbnails */}
                         {thumbnails.map((photo) => {
                           const isLiked = favorites.includes(photo.id);
-                          const isVid = isVideoMedia(photo);
                           return (
                             <div
                               key={photo.id}
                               className="nd-thumb-card"
                               onClick={() => openPhotoModal(photo)}
-                              onMouseEnter={(e) => {
-                                if (isVid) {
-                                  const v = e.currentTarget.querySelector("video");
-                                  if (v) v.play().catch(() => {});
-                                }
-                              }}
-                              onMouseLeave={(e) => {
-                                if (isVid) {
-                                  const v = e.currentTarget.querySelector("video");
-                                  if (v) v.pause();
-                                }
-                              }}
                             >
-                              {isVid ? (
-                                <div className="nd-card-media-wrap">
-                                  <video
-                                    src={photo.image}
-                                    className="nd-card-img nd-card-video"
-                                    loop
-                                    muted
-                                    playsInline
-                                  />
-                                  <span className="nd-video-badge nd-video-badge--thumb">▶ Video</span>
-                                </div>
-                              ) : (
-                                <img
-                                  src={photo.image}
-                                  alt={photo.title}
-                                  className="nd-card-img"
-                                  loading="lazy"
-                                />
-                              )}
+                              <img
+                                src={photo.image}
+                                alt={photo.title}
+                                className="nd-card-img"
+                                loading="lazy"
+                              />
                               <div className="nd-card-overlay">
                                 <span className="nd-card-title">{photo.title}</span>
                                 <button
@@ -1300,20 +1231,11 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                     <div className="nd-fli-left">
                       <div className="nd-fli-icon-wrap">
                         {album.featuredPhoto?.image || album.photos?.[0]?.image ? (
-                          isVideoMedia(album.featuredPhoto || album.photos?.[0]) ? (
-                            <video
-                              src={album.featuredPhoto?.image || album.photos?.[0]?.image}
-                              className="nd-fli-thumb nd-fli-video"
-                              muted
-                              playsInline
-                            />
-                          ) : (
-                            <img
-                              src={album.featuredPhoto?.image || album.photos?.[0]?.image}
-                              alt={album.title}
-                              className="nd-fli-thumb"
-                            />
-                          )
+                          <img
+                            src={album.featuredPhoto?.image || album.photos?.[0]?.image}
+                            alt={album.title}
+                            className="nd-fli-thumb"
+                          />
                         ) : (
                           <span className="nd-fli-folder-icon">📁</span>
                         )}
@@ -1376,22 +1298,11 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                   >
                     <div className="nd-album-cover">
                       {album.featuredPhoto?.image || album.photos?.[0]?.image ? (
-                        isVideoMedia(album.featuredPhoto || album.photos?.[0]) ? (
-                          <video
-                            src={album.featuredPhoto?.image || album.photos?.[0]?.image}
-                            className="nd-album-img nd-album-video"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                          />
-                        ) : (
-                          <img
-                            src={album.featuredPhoto?.image || album.photos?.[0]?.image}
-                            alt={album.title}
-                            className="nd-album-img"
-                          />
-                        )
+                        <img
+                          src={album.featuredPhoto?.image || album.photos?.[0]?.image}
+                          alt={album.title}
+                          className="nd-album-img"
+                        />
                       ) : (
                         <div className="nd-album-cover-empty">
                           <span className="nd-empty-album-icon">📁</span>

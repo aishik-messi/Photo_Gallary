@@ -33,7 +33,6 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
   const [tags, setTags] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [mediaType, setMediaType] = useState("image"); // 'image' | 'video'
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState(false);
@@ -56,18 +55,13 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
     }
   }, [initialCategory, combinedCategories]);
 
-  /* ── Image/Video select / drag-drop ── */
+  /* ── Image select / drag-drop ── */
   const applyFile = (file) => {
-    if (!file) return;
-    const isImg = file.type.startsWith("image/");
-    const isVid = file.type.startsWith("video/");
-    if (!isImg && !isVid) {
-      setUploadError("Please choose a valid image or video file (JPG, PNG, WEBP, MP4, WEBM, MOV).");
+    if (!file || !file.type.startsWith("image/")) {
+      setUploadError("Please choose a valid image file (PNG, JPG, WEBP).");
       return;
     }
     setImageFile(file);
-    setMediaType(isVid ? "video" : "image");
-
     const reader = new FileReader();
     reader.onload = (e) => {
       setImagePreview(e.target.result);
@@ -94,7 +88,6 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
     e.stopPropagation();
     setImageFile(null);
     setImagePreview(null);
-    setMediaType("image");
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -104,8 +97,8 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
     setUploadError("");
     setUploadSuccess(false);
 
-    if (!title.trim()) return setUploadError("Please enter a photo or video title.");
-    if (!imageFile && !imagePreview) return setUploadError("Please select a photo or video to upload.");
+    if (!title.trim()) return setUploadError("Please enter a photo title.");
+    if (!imageFile && !imagePreview) return setUploadError("Please select an image to upload.");
 
     const finalCategory = (
       isCustomMode || category === "Custom"
@@ -141,7 +134,7 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
         }
       }
 
-      // If backend didn't return or user is local/guest, create dynamic photo/video
+      // If backend didn't return or user is local/guest, create dynamic photo
       if (!createdPhoto) {
         createdPhoto = {
           _id: `dyn_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
@@ -149,18 +142,12 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
           description: description.trim(),
           category: finalCategory,
           album: finalCategory,
-          mediaType: mediaType,
           location: location.trim(),
           tags: tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
           imageUrl: imagePreview,
           image: imagePreview,
           createdAt: new Date().toISOString(),
           user: user || { username: "You" },
-        };
-      } else {
-        createdPhoto = {
-          ...createdPhoto,
-          mediaType: mediaType,
         };
       }
 
@@ -187,12 +174,11 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
         setTags("");
         setImageFile(null);
         setImagePreview(null);
-        setMediaType("image");
         setUploadSuccess(false);
         if (fileInputRef.current) fileInputRef.current.value = "";
       }, 1400);
     } catch (err) {
-      setUploadError(err.message || "Failed to upload file.");
+      setUploadError(err.message || "Failed to upload photo.");
     } finally {
       setUploading(false);
     }
@@ -206,14 +192,14 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
       <div className="ap-header">
         <div className="ap-header-icon">📤</div>
         <div>
-          <h2 className="ap-title">Add Photo or Video</h2>
+          <h2 className="ap-title">Add New Photo</h2>
           <p className="ap-subtitle">
             {user ? (
               <>
                 Uploading as <span className="ap-username">@{user.username}</span>
               </>
             ) : (
-              "Add photo or video to your gallery."
+              "Add photo to your dynamic gallery."
             )}
           </p>
         </div>
@@ -230,26 +216,14 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
         >
           {imagePreview ? (
             <>
-              {mediaType === "video" ? (
-                <video
-                  src={imagePreview}
-                  className="ap-preview-img ap-preview-video"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  controls
-                />
-              ) : (
-                <img src={imagePreview} alt="Preview" className="ap-preview-img" />
-              )}
+              <img src={imagePreview} alt="Preview" className="ap-preview-img" />
               <div className="ap-preview-overlay">
                 <button
                   type="button"
                   className="ap-change-btn"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  🔄 Change File
+                  🔄 Change Image
                 </button>
                 <button type="button" className="ap-remove-btn" onClick={removeImage}>
                   🗑️ Remove
@@ -258,17 +232,17 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
             </>
           ) : (
             <div className="ap-dropzone-empty">
-              <div className="ap-dz-icon">🖼️ 🎬</div>
-              <p className="ap-dz-text">Drag &amp; drop your photo or video here</p>
+              <div className="ap-dz-icon">🖼️</div>
+              <p className="ap-dz-text">Drag &amp; drop your photo here</p>
               <p className="ap-dz-sub">or click to browse from device</p>
-              <span className="ap-dz-badge">JPG · PNG · WEBP · MP4 · WEBM · MOV</span>
+              <span className="ap-dz-badge">JPG · PNG · WEBP · GIF</span>
             </div>
           )}
           <input
             id="photo-file"
             name="photo-file"
             type="file"
-            accept="image/*,video/*"
+            accept="image/*"
             onChange={handleImageChange}
             ref={fileInputRef}
             style={{ display: "none" }}
