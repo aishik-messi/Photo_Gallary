@@ -216,6 +216,166 @@
   filter: brightness(1.2);
 }
 
+/* Sidebar Folder List (Line by Line) */
+.nd-nav-section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  padding: 0 8px;
+}
+
+.nd-sidebar-add-cat-btn {
+  background: none;
+  border: none;
+  color: var(--nd-primary);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.nd-sidebar-add-cat-btn:hover {
+  background: var(--nd-primary-light);
+  transform: scale(1.1);
+}
+
+.nd-sidebar-folder-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 280px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 2px;
+  margin-bottom: 16px;
+}
+
+.nd-sidebar-folder-row {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.nd-sidebar-folder-del-btn {
+  background: none;
+  border: none;
+  color: var(--nd-text-subtle);
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.nd-sidebar-folder-row:hover .nd-sidebar-folder-del-btn {
+  opacity: 0.6;
+}
+
+.nd-sidebar-folder-del-btn:hover {
+  opacity: 1 !important;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.nd-sidebar-folder-list::-webkit-scrollbar {
+  width: 4px;
+}
+.nd-sidebar-folder-list::-webkit-scrollbar-thumb {
+  background: var(--nd-sidebar-border);
+  border-radius: 4px;
+}
+
+.nd-sidebar-folder-item {
+  background: transparent;
+  border: none;
+  outline: none;
+  text-align: left;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--nd-text-muted);
+  cursor: pointer;
+  padding: 7px 10px;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nd-sidebar-folder-item:hover {
+  color: var(--nd-primary);
+  background: rgba(0, 92, 48, 0.06);
+}
+
+.nd-sidebar-folder-item--active {
+  color: #ffffff !important;
+  background: #5f6b76 !important;
+  font-weight: 600;
+}
+
+.nd-dark .nd-sidebar-folder-item--active {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+.nd-folder-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  display: inline-flex;
+}
+
+.nd-folder-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nd-folder-count-pill {
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--nd-promo-bg);
+  color: var(--nd-text-subtle);
+  padding: 1px 6px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.nd-sidebar-folder-item--active .nd-folder-count-pill {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.nd-sidebar-create-folder-btn {
+  background: transparent;
+  border: 1px dashed var(--nd-sidebar-border);
+  color: var(--nd-primary);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  transition: all 0.15s ease;
+}
+
+.nd-sidebar-create-folder-btn:hover {
+  background: var(--nd-primary-light);
+  border-color: var(--nd-primary);
+}
+
 /* Sidebar Bottom (Promo + Footer) */
 .nd-sidebar-bottom {
   margin-top: auto;
@@ -646,31 +806,367 @@
 .nd-dropdown-filter {
   left: 0;
   right: auto;
-  min-width: 200px;
+  min-width: 220px;
+  max-width: 290px;
+  max-height: 450px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px 0;
+}
+
+.nd-dropdown-divider {
+  height: 1px;
+  background: var(--nd-sidebar-border);
+  margin: 6px 0;
+}
+
+.nd-filter-option-row {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  padding: 0 4px;
 }
 
 .nd-filter-option {
-  width: 100%;
+  flex: 1;
   text-align: left;
   background: none;
   border: none;
-  padding: 9px 14px;
-  border-radius: 6px;
-  font-size: 13.5px;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-size: 14px;
   color: var(--nd-text-main);
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nd-filter-option:hover {
-  background: var(--nd-promo-bg);
-  color: var(--nd-primary);
+  background: #6c757d;
+  color: #ffffff;
 }
 
 .nd-filter-option--active {
-  background: var(--nd-promo-bg);
+  background: #5f6b76;
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+.nd-dark .nd-filter-option:hover {
+  background: #475569;
+  color: #ffffff;
+}
+
+.nd-dark .nd-filter-option--active {
+  background: #334155;
+  color: #ffffff !important;
+}
+
+.nd-filter-remove-cat-btn {
+  background: none;
+  border: none;
+  color: var(--nd-text-subtle);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-right: 4px;
+  opacity: 0.5;
+  transition: all 0.15s ease;
+}
+
+.nd-filter-remove-cat-btn:hover {
+  opacity: 1;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.nd-filter-create-option {
   color: var(--nd-primary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 4px;
+}
+
+.nd-filter-create-option:hover {
+  background: var(--nd-primary-light);
+  color: var(--nd-primary-dark);
+}
+
+.nd-dark .nd-filter-create-option:hover {
+  background: var(--nd-primary-light);
+  color: var(--nd-primary);
+}
+
+.nd-album-modal {
+  max-width: 480px;
+}
+
+.nd-delete-folder-modal {
+  max-width: 480px;
+}
+
+.nd-delete-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--nd-sidebar-border);
+  background: var(--nd-sidebar-bg);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  width: 100%;
+}
+
+.nd-delete-option-btn--keep {
+  border-color: rgba(0, 92, 48, 0.2);
+  color: var(--nd-primary);
+}
+
+.nd-delete-option-btn--keep:hover {
+  background: var(--nd-primary-light);
+  border-color: var(--nd-primary);
+  transform: translateY(-1px);
+}
+
+.nd-delete-option-btn--delete {
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #ef4444;
+}
+
+.nd-delete-option-btn--delete:hover {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
+.nd-album-card-delete-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.nd-album-card-delete-btn:hover {
+  opacity: 1 !important;
+  background: #ef4444;
+  transform: scale(1.1);
+}
+
+.nd-folder-banner {
+  background: var(--nd-sidebar-bg);
+  border: 1px solid var(--nd-sidebar-border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+.nd-folder-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.nd-folder-back-btn {
+  background: var(--nd-promo-bg);
+  border: 1px solid var(--nd-sidebar-border);
+  color: var(--nd-text-muted);
+  font-size: 12.5px;
   font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nd-folder-back-btn:hover {
+  background: var(--nd-primary-light);
+  color: var(--nd-primary);
+  border-color: var(--nd-primary);
+}
+
+.nd-folder-banner-info {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.nd-folder-banner-title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--nd-text-heading);
+  letter-spacing: -0.3px;
+}
+
+.nd-folder-banner-count {
+  font-size: 13px;
+  color: var(--nd-text-subtle);
+  font-weight: 500;
+}
+
+.nd-folder-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nd-empty-state-delete-btn {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nd-empty-state-delete-btn:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
+.nd-album-card-del-link-btn {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nd-album-card-del-link-btn:hover {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.nd-title-action-btn--danger {
+  background: none;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nd-title-action-btn--danger:hover {
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+
+.nd-restore-btn {
+  background: none;
+  border: 1px dashed var(--nd-sidebar-border);
+  color: var(--nd-text-subtle);
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nd-restore-btn:hover {
+  color: var(--nd-primary);
+  border-color: var(--nd-primary);
+}
+
+.nd-album-cover-empty {
+  height: 190px;
+  width: 100%;
+  background: linear-gradient(135deg, var(--nd-bg-subtle) 0%, var(--nd-promo-bg) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-bottom: 1px solid var(--nd-sidebar-border);
+}
+
+.nd-empty-album-icon {
+  font-size: 38px;
+}
+
+.nd-empty-album-text {
+  font-size: 12.5px;
+  color: var(--nd-text-muted);
+  font-weight: 500;
+}
+
+.nd-album-add-photo-btn {
+  background: var(--nd-primary-light);
+  color: var(--nd-primary);
+  border: 1px solid transparent;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nd-album-add-photo-btn:hover {
+  background: var(--nd-primary);
+  color: #ffffff;
+}
+
+.ap-toggle-custom-btn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nd-primary, #005c30);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.ap-toggle-custom-btn:hover {
+  background: var(--nd-primary-light, rgba(0, 92, 48, 0.08));
+  text-decoration: underline;
 }
 
 .nd-total-count {
@@ -832,6 +1328,199 @@
 }
 
 /* ── ALBUMS TAB ────────────────────────────────────── */
+.nd-view-mode-toggle {
+  display: inline-flex;
+  background: var(--nd-promo-bg);
+  border: 1px solid var(--nd-sidebar-border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.nd-toggle-view-btn {
+  background: transparent;
+  border: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--nd-text-muted);
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nd-toggle-view-btn.active {
+  background: var(--nd-sidebar-bg);
+  color: var(--nd-text-heading);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* ── FOLDERS LINE BY LINE CONTAINER ────────────────── */
+.nd-folders-line-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.nd-folder-line-item {
+  background: var(--nd-sidebar-bg);
+  border: 1px solid var(--nd-sidebar-border);
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.nd-folder-line-item:hover {
+  border-color: var(--nd-primary);
+  transform: translateX(3px);
+  box-shadow: 0 4px 14px rgba(0, 92, 48, 0.08);
+}
+
+.nd-dark .nd-folder-line-item:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.nd-fli-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  flex: 1;
+}
+
+.nd-fli-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--nd-bg-subtle) 0%, var(--nd-promo-bg) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid var(--nd-sidebar-border);
+}
+
+.nd-fli-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nd-fli-folder-icon {
+  font-size: 24px;
+}
+
+.nd-fli-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.nd-fli-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--nd-text-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nd-fli-subtitle {
+  font-size: 12px;
+  color: var(--nd-text-subtle);
+}
+
+.nd-fli-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.nd-fli-badge {
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--nd-promo-bg);
+  color: var(--nd-text-muted);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  border: 1px solid var(--nd-sidebar-border);
+}
+
+.nd-fli-badge.has-photos {
+  background: var(--nd-primary-light);
+  color: var(--nd-primary);
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.nd-fli-action-btn {
+  background: transparent;
+  border: 1px solid var(--nd-sidebar-border);
+  color: var(--nd-primary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.nd-fli-action-btn:hover {
+  background: var(--nd-primary);
+  color: #ffffff;
+  border-color: var(--nd-primary);
+}
+
+.nd-fli-open-btn {
+  background: var(--nd-primary);
+  border: none;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.nd-fli-open-btn:hover {
+  background: var(--nd-primary-hover);
+}
+
+.nd-fli-delete-btn {
+  background: none;
+  border: none;
+  color: var(--nd-text-subtle);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  opacity: 0.5;
+  transition: all 0.15s ease;
+}
+
+.nd-fli-delete-btn:hover {
+  opacity: 1;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
 .nd-albums-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -1225,3 +1914,77 @@
   border-color: var(--nd-primary) !important;
   background: var(--nd-primary-light) !important;
 }
+
+/* ── Video Media & Animation Enhancements ── */
+.nd-card-media-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #0f172a;
+}
+
+.nd-card-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.nd-video-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(15, 23, 42, 0.76);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  pointer-events: none;
+  letter-spacing: 0.3px;
+  animation: pulseBadge 3s ease-in-out infinite alternate;
+}
+
+@keyframes pulseBadge {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.04); }
+}
+
+.nd-video-badge--thumb {
+  top: 6px;
+  left: 6px;
+  font-size: 10px;
+  padding: 3px 7px;
+}
+
+.nd-fli-video {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.nd-album-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Lightbox video player */
+.modal-video {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 12px;
+  background: #000000;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  outline: none;
+}
+

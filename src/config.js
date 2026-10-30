@@ -14,3 +14,28 @@ export const resolveImageUrl = (url) => {
   }
   return `${BACKEND_URL}${url.startsWith("/") ? "" : "/"}${url}`;
 };
+
+export const isVideoMedia = (item) => {
+  if (!item) return false;
+  if (typeof item === "string") {
+    const s = item.toLowerCase();
+    return (
+      s.endsWith(".mp4") ||
+      s.endsWith(".webm") ||
+      s.endsWith(".mov") ||
+      s.endsWith(".ogg") ||
+      s.endsWith(".m4v") ||
+      s.startsWith("data:video/")
+    );
+  }
+  if (item.mediaType === "video") return true;
+  const url = (item.imageUrl || item.image || item.url || "").toLowerCase();
+  return (
+    url.endsWith(".mp4") ||
+    url.endsWith(".webm") ||
+    url.endsWith(".mov") ||
+    url.endsWith(".ogg") ||
+    url.endsWith(".m4v") ||
+    url.startsWith("data:video/")
+  );
+};
