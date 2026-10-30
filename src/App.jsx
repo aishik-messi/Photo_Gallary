@@ -8,7 +8,6 @@ import Dashboard   from "./components/Dashboard";
 
 function App() {
   const { user } = useAuth();
-  const [viewDemoDashboard, setViewDemoDashboard] = useState(false);
 
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
@@ -22,13 +21,12 @@ function App() {
     });
   };
 
-  if (user || viewDemoDashboard) {
+  if (user) {
     return (
       <div className="page-fade-in">
         <Dashboard
           darkMode={darkMode}
           toggleDarkMode={toggleDarkMode}
-          onGoToLanding={() => setViewDemoDashboard(false)}
         />
       </div>
     );
@@ -39,7 +37,6 @@ function App() {
       <LandingPage
         darkMode={darkMode}
         toggleDarkMode={toggleDarkMode}
-        onExploreDashboard={() => setViewDemoDashboard(true)}
       />
     </div>
   );

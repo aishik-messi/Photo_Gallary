@@ -2,7 +2,7 @@ import { useState } from "react";
 import Navbar from "./Navbar";
 import AuthModal from "./AuthModal";
 
-function LandingPage({ darkMode, toggleDarkMode, onExploreDashboard }) {
+function LandingPage({ darkMode, toggleDarkMode }) {
   const [authModal, setAuthModal] = useState({ open: false, tab: "register" });
 
   const openRegister = () => setAuthModal({ open: true, tab: "register" });
@@ -16,7 +16,7 @@ function LandingPage({ darkMode, toggleDarkMode, onExploreDashboard }) {
       <Navbar
         darkMode={darkMode}
         toggleDarkMode={toggleDarkMode}
-        onSelectGallery={onExploreDashboard}
+        onSelectGallery={openLogin}
       />
 
       {/* ── HERO ───────────────────────────── */}
@@ -43,8 +43,8 @@ function LandingPage({ darkMode, toggleDarkMode, onExploreDashboard }) {
           </p>
 
           <div className="lp-cta-row">
-            <button className="lp-cta-primary" onClick={onExploreDashboard || openRegister}>
-              ✨ View New Dashboard
+            <button className="lp-cta-primary" onClick={openRegister}>
+              Get Started →
             </button>
             <button className="lp-cta-ghost" onClick={openLogin}>
               Sign In →
