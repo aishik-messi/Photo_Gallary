@@ -13,6 +13,27 @@ export const DEFAULT_CATEGORIES = [
   "Other",
 ];
 
+export const CATEGORY_ICONS = {
+  "my photos": "📸",
+  "nature": "🍃",
+  "travel": "✈️",
+  "family & friends": "👥",
+  "portraits": "👤",
+  "food & drinks": "🍔",
+  "architecture": "🏛️",
+  "animals": "🐾",
+  "art & design": "🎨",
+  "celebrations": "🎉",
+  "sports": "⚽",
+  "other": "📁",
+};
+
+export const getCategoryIcon = (category) => {
+  if (!category) return "📁";
+  const key = category.trim().toLowerCase();
+  return CATEGORY_ICONS[key] || "📁";
+};
+
 export const getSavedCustomCategories = () => {
   try {
     const saved = localStorage.getItem("photo_custom_categories");

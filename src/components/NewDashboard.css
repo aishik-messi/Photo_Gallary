@@ -1356,6 +1356,43 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
+.nd-folder-line-item--primary {
+  border-left: 3.5px solid var(--nd-primary);
+  background: linear-gradient(90deg, rgba(62, 90, 63, 0.06) 0%, var(--nd-sidebar-bg) 60%);
+}
+
+.nd-dark .nd-folder-line-item--primary {
+  background: linear-gradient(90deg, rgba(62, 90, 63, 0.18) 0%, var(--nd-sidebar-bg) 60%);
+  border-left-color: #C7CBB8;
+}
+
+.nd-fli-primary-pill {
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--nd-primary-light);
+  color: var(--nd-primary);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  letter-spacing: 0.2px;
+  border: 1px solid rgba(62, 90, 63, 0.2);
+}
+
+.nd-dark .nd-fli-primary-pill {
+  background: rgba(199, 203, 184, 0.15);
+  color: #F1F3EB;
+  border-color: rgba(199, 203, 184, 0.25);
+}
+
+.nd-fli-category-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.nd-album-card--primary {
+  border-color: var(--nd-primary);
+  box-shadow: 0 4px 18px rgba(62, 90, 63, 0.15);
+}
+
 .nd-folder-line-item:hover {
   border-color: var(--nd-primary);
   transform: translateX(3px);
