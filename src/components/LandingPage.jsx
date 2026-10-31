@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "./Navbar";
 import AuthModal from "./AuthModal";
+import { AESTHETIC_SHOWCASE_PHOTOS } from "../data/photos";
 
 function LandingPage({ darkMode, toggleDarkMode }) {
   const [authModal, setAuthModal] = useState({ open: false, tab: "register" });
@@ -60,51 +61,22 @@ function LandingPage({ darkMode, toggleDarkMode }) {
           </div>
         </div>
 
-        {/* Floating preview cards with dynamic photos */}
+        {/* Floating preview cards with aesthetic, unique photos */}
         <div className="lp-preview-cards" aria-hidden="true">
-          {(() => {
-            let dynamicList = [];
-            try {
-              const saved = localStorage.getItem("dynamic_photos");
-              if (saved) dynamicList = JSON.parse(saved);
-            } catch {
-              dynamicList = [];
-            }
-
-            if (dynamicList.length >= 3) {
-              return dynamicList.slice(0, 3).map((photo, i) => (
-                <div className={`lp-card lp-card-${i + 1}`} key={photo.id || i}>
-                  <img src={photo.image} alt={photo.title} className="lp-card-img" />
-                  <div className="lp-card-body">
-                    <span>📁 {photo.category || "Album"}</span>
-                  </div>
-                </div>
-              ));
-            }
-
-            return (
-              <>
-                <div className="lp-card lp-card-1">
-                  <div className="lp-card-img" style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #38bdf8, #0284c7)", fontSize: "42px" }}>🌿</div>
-                  <div className="lp-card-body">
-                    <span>🌿 Nature</span>
-                  </div>
-                </div>
-                <div className="lp-card lp-card-2">
-                  <div className="lp-card-img" style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #0ea5e9, #0369a1)", fontSize: "42px" }}>✈️</div>
-                  <div className="lp-card-body">
-                    <span>✈️ Travel</span>
-                  </div>
-                </div>
-                <div className="lp-card lp-card-3">
-                  <div className="lp-card-img" style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #06b6d4, #0891b2)", fontSize: "42px" }}>📸</div>
-                  <div className="lp-card-body">
-                    <span>📸 Moments</span>
-                  </div>
-                </div>
-              </>
-            );
-          })()}
+          {AESTHETIC_SHOWCASE_PHOTOS.map((item, i) => (
+            <div className={`lp-card lp-card-${i + 1}`} key={item.id}>
+              <img
+                src={item.image}
+                alt={item.title}
+                className="lp-card-img"
+                loading="eager"
+              />
+              <div className="lp-card-body">
+                <span>{item.badge}</span>
+                <p>{item.title}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

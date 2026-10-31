@@ -8,6 +8,7 @@ import {
   getDeletedCategories,
   saveDeletedCategories,
 } from "../data/categories";
+import defaultPhotos from "../data/photos";
 
 import AddPhoto from "./AddPhoto";
 import ImageModal from "./ImageModal";
@@ -206,13 +207,17 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
     }
   }, [favorites]);
 
-  /* ── 100% Dynamic Photos (Loaded from backend or dynamic localStorage) ── */
+  /* ── Photos (Loaded from dynamic localStorage, server, or curated defaults) ── */
   const [photos, setPhotos] = useState(() => {
     try {
       const saved = localStorage.getItem("dynamic_photos");
-      return saved ? JSON.parse(saved) : [];
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+      return defaultPhotos;
     } catch {
-      return [];
+      return defaultPhotos;
     }
   });
 
