@@ -65,18 +65,7 @@ function Navbar({
           <span>Photo<span>Gallery</span></span>
         </a>
 
-        {/* Desktop Navigation Links */}
-        <div className="nav-links">
-          <a href="#home" onClick={handleHomeClick}>
-            Home
-          </a>
-          <a href="#gallery" onClick={handleGalleryClick}>
-            Gallery
-          </a>
-          <a href="#gallery" onClick={handleFavoritesClick}>
-            Favorites
-          </a>
-        </div>
+        {/* Desktop Navigation Links removed per request */}
 
         {/* Right side controls (Desktop) */}
         <div className="nav-actions">
@@ -181,19 +170,7 @@ function Navbar({
           </div>
         ) : null}
 
-        <div className="nav-mobile-links">
-          <a href="#home" onClick={handleHomeClick} className="nav-mobile-link">
-            <span className="nav-link-icon">🏠</span> Home
-          </a>
-          <a href="#gallery" onClick={handleGalleryClick} className="nav-mobile-link">
-            <span className="nav-link-icon">🖼️</span> Gallery
-          </a>
-          <a href="#gallery" onClick={handleFavoritesClick} className="nav-mobile-link">
-            <span className="nav-link-icon">❤️</span> Favorites
-          </a>
-        </div>
 
-        <div className="nav-mobile-divider" />
 
         <div className="nav-mobile-actions">
           {/* Animated Sky Theme Toggle in Mobile Drawer */}
