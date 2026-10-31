@@ -432,10 +432,10 @@ function AuthModal({ isOpen, onClose, defaultTab = "login" }) {
         ═══════════════════════════════════════════════════════════════ */}
         {(mode === "login" || mode === "register") && (
           <div className="cyber-tab-slider">
-            <div className="cyber-track-line" />
+            <div className="cyber-track-rail" />
             <div
-              className={`cyber-track-orb ${
-                mode === "login" ? "orb-left" : "orb-right"
+              className={`cyber-slider-pill ${
+                mode === "login" ? "pill-login" : "pill-register"
               }`}
             />
 
@@ -445,9 +445,14 @@ function AuthModal({ isOpen, onClose, defaultTab = "login" }) {
                 className={`cyber-tab-btn ${mode === "login" ? "active" : ""}`}
                 onClick={() => switchTab("login")}
               >
-                <span className="cyber-tab-node">
-                  <span className="cyber-tab-node-core" />
-                  {mode === "login" && <span className="cyber-node-ripple" />}
+                <span className="cyber-node-indicator">
+                  <span className="cyber-node-dot" />
+                  {mode === "login" && (
+                    <>
+                      <span className="cyber-node-pulse-ring ring-1" />
+                      <span className="cyber-node-pulse-ring ring-2" />
+                    </>
+                  )}
                 </span>
                 <span className="cyber-tab-text">Sign In</span>
               </button>
@@ -457,9 +462,14 @@ function AuthModal({ isOpen, onClose, defaultTab = "login" }) {
                 className={`cyber-tab-btn ${mode === "register" ? "active" : ""}`}
                 onClick={() => switchTab("register")}
               >
-                <span className="cyber-tab-node">
-                  <span className="cyber-tab-node-core" />
-                  {mode === "register" && <span className="cyber-node-ripple" />}
+                <span className="cyber-node-indicator">
+                  <span className="cyber-node-dot" />
+                  {mode === "register" && (
+                    <>
+                      <span className="cyber-node-pulse-ring ring-1" />
+                      <span className="cyber-node-pulse-ring ring-2" />
+                    </>
+                  )}
                 </span>
                 <span className="cyber-tab-text">Sign Up</span>
               </button>
