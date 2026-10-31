@@ -55,8 +55,6 @@ function LandingPage({ darkMode, toggleDarkMode }) {
           <div className="lp-stats-row">
             <div className="lp-stat"><strong>📸</strong><span>Photo Gallery</span></div>
             <div className="lp-stat-divider" />
-            <div className="lp-stat"><strong>6+</strong><span>Categories</span></div>
-            <div className="lp-stat-divider" />
             <div className="lp-stat"><strong>Free</strong><span>Forever</span></div>
           </div>
         </div>
