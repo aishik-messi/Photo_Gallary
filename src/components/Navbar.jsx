@@ -59,8 +59,9 @@ function Navbar({
     <>
       <nav className="navbar" id="home">
         {/* Logo */}
-        <a href="#home" className="logo" onClick={handleHomeClick} style={{ textDecoration: "none", color: "inherit" }}>
-          📸 Photo<span>Gallery</span>
+        <a href="#home" className="logo" onClick={handleHomeClick} style={{ textDecoration: "none", color: "inherit", display: "inline-flex", alignItems: "center", gap: "10px" }}>
+          <img src="/logo.png" alt="Photo Gallery Logo" className="brand-logo-img" />
+          <span>Photo<span>Gallery</span></span>
         </a>
 
         {/* Desktop Navigation Links */}
@@ -148,8 +149,9 @@ function Navbar({
 
       <div className={`nav-mobile-drawer ${mobileMenuOpen ? "open" : ""}`}>
         <div className="nav-mobile-header">
-          <div className="logo">
-            📸 Photo<span>Gallery</span>
+          <div className="logo" style={{ display: "inline-flex", alignItems: "center", gap: "10px" }}>
+            <img src="/logo.png" alt="Photo Gallery Logo" className="brand-logo-img" />
+            <span>Photo<span>Gallery</span></span>
           </div>
           <button
             className="nav-mobile-close-btn"

@@ -212,7 +212,7 @@ function AuthModal({ isOpen, onClose, defaultTab = "login" }) {
         <button className="auth-close" onClick={onClose} aria-label="Close">✕</button>
 
         <div className="auth-header">
-          <div className="auth-logo">📸</div>
+          <img src="/logo.png" alt="Photo Gallery Logo" className="auth-logo-img" />
           <h2>{tab === "login" ? "Welcome Back" : "Create Account"}</h2>
           <p>{tab === "login" ? "Sign in to your gallery" : "Join and start sharing memories"}</p>
         </div>

@@ -530,7 +530,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
         <div className="nd-sidebar-inner">
           {/* Logo Brand Header */}
           <div className="nd-sidebar-logo">
-            <div className="nd-logo-icon">📸</div>
+            <img src="/logo.png" alt="Photo Gallery Logo" className="nd-logo-img" />
             <span className="nd-logo-text">PhotoGallery</span>
           </div>
 

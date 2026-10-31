@@ -128,13 +128,16 @@ function LandingPage({ darkMode, toggleDarkMode }) {
         <h2>Start your photo gallery today</h2>
         <p>Upload, organise by category &amp; access your photos from anywhere — 100% free.</p>
         <button className="lp-cta-primary lp-cta-big" onClick={openRegister}>
-          📸 Create My Photo Gallery
+          ✨ Create My Photo Gallery
         </button>
       </section>
 
       {/* ── FOOTER ────────────────────────── */}
       <footer className="lp-footer">
-        <div className="logo">📸 Photo<span>Gallery</span></div>
+        <div className="logo" style={{ display: "inline-flex", alignItems: "center", gap: "10px", justifyContent: "center" }}>
+          <img src="/logo.png" alt="Photo Gallery Logo" className="brand-logo-img" />
+          <span>Photo<span>Gallery</span></span>
+        </div>
         <p>© 2026 Photo Gallery — Store &amp; browse your photos by category.</p>
       </footer>
 
