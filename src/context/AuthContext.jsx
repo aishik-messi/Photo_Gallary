@@ -77,7 +77,7 @@ export function AuthProvider({ children }) {
   /* =====================
      VERIFY OTP
   ===================== */
-  const verifyOtp = async (email, otp) => {
+  const verifyOtp = async (email, otp, { delayCommit = false } = {}) => {
     setLoading(true);
     setError(null);
     try {
@@ -88,9 +88,11 @@ export function AuthProvider({ children }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.msg || "OTP verification failed");
-      setToken(data.token);
-      setUser(data.user);
-      return { success: true };
+      if (!delayCommit) {
+        setToken(data.token);
+        setUser(data.user);
+      }
+      return { success: true, user: data.user, token: data.token };
     } catch (err) {
       setError(err.message);
       return { success: false, error: err.message };
@@ -113,7 +115,57 @@ export function AuthProvider({ children }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.msg || "Failed to resend OTP");
-      return { success: true };
+      return { success: true, msg: data.msg };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =====================
+     FORGOT PASSWORD (SEND OTP)
+  ===================== */
+  const forgotPassword = async (email) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_URL}/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.msg || "Failed to send reset code");
+      return { success: true, msg: data.msg };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =====================
+     RESET PASSWORD
+  ===================== */
+  const resetPassword = async (email, otp, newPassword, { delayCommit = false } = {}) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_URL}/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp, newPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.msg || "Password reset failed");
+      if (!delayCommit) {
+        setToken(data.token);
+        setUser(data.user);
+      }
+      return { success: true, user: data.user, token: data.token, msg: data.msg };
     } catch (err) {
       setError(err.message);
       return { success: false, error: err.message };
@@ -125,7 +177,7 @@ export function AuthProvider({ children }) {
   /* =====================
      LOGIN
   ===================== */
-  const login = async (email, password) => {
+  const login = async (email, password, { delayCommit = false } = {}) => {
     setLoading(true);
     setError(null);
     try {
@@ -142,14 +194,26 @@ export function AuthProvider({ children }) {
         }
         throw new Error(data.msg || "Login failed");
       }
-      setToken(data.token);
-      setUser(data.user);
-      return { success: true };
+      if (!delayCommit) {
+        setToken(data.token);
+        setUser(data.user);
+      }
+      return { success: true, user: data.user, token: data.token };
     } catch (err) {
       setError(err.message);
       return { success: false, error: err.message };
     } finally {
       setLoading(false);
+    }
+  };
+
+  /* =====================
+     COMPLETE AUTH (after animation finish)
+  ===================== */
+  const completeAuth = (authUser, authToken) => {
+    if (authToken && authUser) {
+      setToken(authToken);
+      setUser(authUser);
     }
   };
 
@@ -249,6 +313,9 @@ export function AuthProvider({ children }) {
         register,
         verifyOtp,
         resendOtp,
+        forgotPassword,
+        resetPassword,
+        completeAuth,
         updateProfile,
         updateCoverImage,
         removeCoverImage,

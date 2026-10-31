@@ -5,7 +5,7 @@ const jwt      = require('jsonwebtoken');
 const crypto   = require('crypto');
 const User     = require('../models/User');
 const auth     = require('../middleware/auth');
-const { sendOtpEmail } = require('../utils/mailer');
+const { sendOtpEmail, sendResetOtpEmail } = require('../utils/mailer');
 
 /** Generate a 6-digit numeric OTP */
 function generateOtp() {
@@ -155,6 +155,101 @@ router.post('/login', async (req, res) => {
     });
   } catch (err) {
     console.error('Login error:', err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// ─────────────────────────────────────────────
+// POST /api/auth/forgot-password
+// Generates a 6-digit OTP and sends it via email
+// ─────────────────────────────────────────────
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  try {
+    if (!email) {
+      return res.status(400).json({ msg: 'Please enter your email address.' });
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ msg: 'No account found with this email address.' });
+    }
+
+    const otp = generateOtp();
+    const otpExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    user.otp = otp;
+    user.otpExpiresAt = otpExpiresAt;
+    await user.save();
+
+    console.log(`[AUTH FORGOT PASSWORD] Generated OTP for ${email}: ${otp}`);
+
+    try {
+      await sendResetOtpEmail(email, otp);
+    } catch (mailErr) {
+      console.warn('Mail send failed (continuing):', mailErr.message);
+    }
+
+    res.json({ msg: 'Password reset code sent to your email.' });
+  } catch (err) {
+    console.error('Forgot password error:', err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+});
+
+// ─────────────────────────────────────────────
+// POST /api/auth/reset-password
+// Verifies OTP and resets user password, returns auth token
+// ─────────────────────────────────────────────
+router.post('/reset-password', async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+  try {
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ msg: 'Please provide email, verification code, and new password.' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found.' });
+    }
+
+    if (!user.otp || user.otp !== otp) {
+      return res.status(400).json({ msg: 'Invalid verification code.' });
+    }
+
+    if (user.otpExpiresAt && user.otpExpiresAt < new Date()) {
+      return res.status(400).json({ msg: 'Verification code has expired. Please request a new one.' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ msg: 'New password must be at least 6 characters.' });
+    }
+
+    // Set new password (pre-save hook hashes it)
+    user.password = newPassword;
+    user.isVerified = true;
+    user.otp = undefined;
+    user.otpExpiresAt = undefined;
+    await user.save();
+
+    console.log(`[AUTH RESET PASSWORD] Password successfully reset for ${email}`);
+
+    const payload = { user: { id: user.id } };
+    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '5h' }, (err, token) => {
+      if (err) throw err;
+      res.json({
+        msg: 'Password updated successfully!',
+        token,
+        user: {
+          id:             user.id,
+          username:       user.username,
+          email:          user.email,
+          profilePicture: user.profilePicture || '',
+          coverImage:     user.coverImage || '',
+          bio:            user.bio || '',
+        },
+      });
+    });
+  } catch (err) {
+    console.error('Reset password error:', err.message);
     res.status(500).json({ msg: 'Server error' });
   }
 });

@@ -1,0 +1,347 @@
+/* ═══════════════════════════════════════════════════════════
+   CYBER DIAL UNLOCK & VERIFICATION ANIMATION
+   Inspired by futuristic circular scanner & combination lock
+   Palette: #0F1F17, #1E3A2E, #3E5A3F, #6B7F67, #C7CBB8, #3D4337
+═══════════════════════════════════════════════════════════ */
+
+.cdu-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #1E3A2E 0%, #0F1F17 85%);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 24px;
+  overflow: hidden;
+  animation: cduFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes cduFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Background atmospheric grid / aura */
+.cdu-bg-glow {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(107, 127, 103, 0.25) 0%, rgba(30, 58, 46, 0.15) 50%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: cduPulseAura 3s ease-in-out infinite alternate;
+}
+
+@keyframes cduPulseAura {
+  0% { transform: scale(0.85); opacity: 0.5; }
+  100% { transform: scale(1.15); opacity: 0.9; }
+}
+
+/* Dial container */
+.cdu-stage {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Outer track ring */
+.cdu-track-ring {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 1px dashed rgba(199, 203, 184, 0.2);
+  pointer-events: none;
+}
+
+/* Concentric ripple shockwaves on success (matching video 00:00 & 00:07) */
+.cdu-ripple {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.cdu-stage.success .cdu-ripple-1 {
+  animation: cduShockwave 1.6s cubic-bezier(0.1, 0.8, 0.2, 1) infinite;
+}
+.cdu-stage.success .cdu-ripple-2 {
+  animation: cduShockwave 1.6s cubic-bezier(0.1, 0.8, 0.2, 1) 0.35s infinite;
+}
+.cdu-stage.success .cdu-ripple-3 {
+  animation: cduShockwave 1.6s cubic-bezier(0.1, 0.8, 0.2, 1) 0.7s infinite;
+}
+
+@keyframes cduShockwave {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.9;
+    border-color: #FFFFFF;
+    box-shadow: 0 0 20px #FFFFFF, inset 0 0 10px #C7CBB8;
+  }
+  50% {
+    opacity: 0.6;
+    border-color: #C7CBB8;
+  }
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+    border-color: #6B7F67;
+  }
+}
+
+/* Center core node */
+.cdu-center-node {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 0 14px #FFFFFF, 0 0 28px #C7CBB8, 0 0 45px rgba(62, 90, 63, 0.7);
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.cdu-stage.success .cdu-center-node {
+  transform: scale(1.3);
+  box-shadow: 0 0 25px #FFFFFF, 0 0 50px #C7CBB8, 0 0 80px #6B7F67;
+}
+
+.cdu-stage.error .cdu-center-node {
+  background: #e74c3c;
+  box-shadow: 0 0 15px #e74c3c, 0 0 30px rgba(231, 76, 60, 0.6);
+}
+
+/* Rotating needle line (from center node outwards) */
+.cdu-needle-arm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 2px;
+  transform-origin: 0% 50%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.cdu-needle-line {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #FFFFFF 0%, rgba(199, 203, 184, 0.8) 70%, transparent 100%);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 16px rgba(107, 127, 103, 0.6);
+}
+
+.cdu-stage.verifying .cdu-needle-arm {
+  animation: cduNeedleRotate 1.3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.cdu-stage.success .cdu-needle-arm {
+  animation: cduNeedleSuccess 0.8s ease-out forwards;
+}
+
+.cdu-stage.error .cdu-needle-arm {
+  animation: none;
+  opacity: 0.3;
+}
+
+@keyframes cduNeedleRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes cduNeedleSuccess {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Circular Nodes Array (8 nodes) */
+.cdu-node {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  margin-left: -8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(199, 203, 184, 0.4);
+  background: rgba(15, 31, 23, 0.8);
+  box-sizing: border-box;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 8;
+}
+
+/* Lit node */
+.cdu-node.active {
+  border-color: #FFFFFF;
+  background: #FFFFFF;
+  box-shadow: 0 0 12px #FFFFFF, 0 0 24px #C7CBB8, 0 0 35px rgba(62, 90, 63, 0.7);
+  transform: translate(var(--node-x), var(--node-y)) scale(1.25);
+}
+
+/* Default unlit node translation */
+.cdu-node:not(.active) {
+  transform: translate(var(--node-x), var(--node-y)) scale(1);
+}
+
+/* All nodes bloom together on success (matching video frame 00:06) */
+.cdu-stage.success .cdu-node {
+  border-color: #FFFFFF !important;
+  background: #FFFFFF !important;
+  box-shadow: 0 0 18px #FFFFFF, 0 0 32px #C7CBB8, 0 0 50px rgba(107, 127, 103, 0.9) !important;
+  animation: cduNodeBloom 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes cduNodeBloom {
+  0% {
+    transform: translate(var(--node-x), var(--node-y)) scale(1.15);
+    box-shadow: 0 0 14px #FFFFFF, 0 0 24px #C7CBB8;
+  }
+  100% {
+    transform: translate(var(--node-x), var(--node-y)) scale(1.4);
+    box-shadow: 0 0 24px #FFFFFF, 0 0 42px #C7CBB8, 0 0 65px #3E5A3F;
+  }
+}
+
+.cdu-stage.error .cdu-node {
+  border-color: rgba(231, 76, 60, 0.5);
+}
+
+/* Status Text Section */
+.cdu-info {
+  text-align: center;
+  z-index: 10;
+  max-width: 320px;
+}
+
+.cdu-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.cdu-badge.verifying {
+  background: rgba(107, 127, 103, 0.2);
+  color: #C7CBB8;
+  border: 1px solid rgba(199, 203, 184, 0.3);
+}
+
+.cdu-badge.success {
+  background: rgba(62, 90, 63, 0.4);
+  color: #FFFFFF;
+  border: 1px solid #C7CBB8;
+  box-shadow: 0 0 12px rgba(199, 203, 184, 0.4);
+}
+
+.cdu-badge.error {
+  background: rgba(231, 76, 60, 0.2);
+  color: #ff8888;
+  border: 1px solid rgba(231, 76, 60, 0.4);
+}
+
+.cdu-title {
+  color: #F1F3EB;
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  letter-spacing: -0.2px;
+}
+
+.cdu-subtitle {
+  color: #C7CBB8;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 14px;
+}
+
+/* Progress bar */
+.cdu-progress-bar {
+  width: 180px;
+  height: 4px;
+  background: rgba(199, 203, 184, 0.2);
+  border-radius: 4px;
+  margin: 0 auto 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cdu-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #3E5A3F, #C7CBB8, #FFFFFF);
+  box-shadow: 0 0 8px #FFFFFF;
+  transition: width 0.3s ease;
+}
+
+.cdu-stage.verifying + .cdu-info .cdu-progress-fill {
+  animation: cduProgressScan 1.6s ease-in-out infinite alternate;
+}
+
+@keyframes cduProgressScan {
+  0% { width: 15%; margin-left: 0%; }
+  50% { width: 50%; margin-left: 25%; }
+  100% { width: 35%; margin-left: 65%; }
+}
+
+.cdu-stage.success + .cdu-info .cdu-progress-fill {
+  width: 100% !important;
+  margin-left: 0% !important;
+  background: #FFFFFF;
+  box-shadow: 0 0 12px #FFFFFF;
+}
+
+/* Error button */
+.cdu-retry-btn {
+  background: #3E5A3F;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 6px;
+}
+
+.cdu-retry-btn:hover {
+  background: #6B7F67;
+  transform: translateY(-1px);
+}
