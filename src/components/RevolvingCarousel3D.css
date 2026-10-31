@@ -1,0 +1,273 @@
+/* ═══════════════════════════════════════════════════════════
+   3D REVOLVING CYLINDER CAROUSEL SHOWCASE
+   Inspired by 3D revolving webpage/photo fan showcase
+   Colors: #0F1F17, #1E3A2E, #3E5A3F, #6B7F67, #C7CBB8, #3D4337
+═══════════════════════════════════════════════════════════ */
+
+.rc3d-stage {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  height: 420px;
+  margin-left: auto;
+  perspective: 1100px;
+  perspective-origin: 50% 45%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  z-index: 10;
+}
+
+/* Atmospheric 3D floor shadow/reflection underneath */
+.rc3d-floor-glow {
+  position: absolute;
+  bottom: 10px;
+  width: 380px;
+  height: 70px;
+  background: radial-gradient(ellipse at center, rgba(62, 90, 63, 0.35) 0%, rgba(30, 58, 46, 0.15) 50%, transparent 75%);
+  border-radius: 50%;
+  transform: rotateX(65deg);
+  pointer-events: none;
+  filter: blur(12px);
+  animation: rc3dFloorPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes rc3dFloorPulse {
+  0% { transform: rotateX(65deg) scale(0.9); opacity: 0.5; }
+  100% { transform: rotateX(65deg) scale(1.1); opacity: 0.85; }
+}
+
+/* 3D revolving cylinder container */
+.rc3d-cylinder {
+  position: relative;
+  width: 220px;
+  height: 290px;
+  transform-style: preserve-3d;
+  animation: rc3dSpin 22s linear infinite;
+  transition: transform 0.4s ease-out;
+}
+
+/* Hover: slow down or pause rotation so user can view/click */
+.rc3d-stage:hover .rc3d-cylinder {
+  animation-play-state: paused;
+}
+
+/* Full 360-degree continuous 3D rotation with slight tilt down */
+@keyframes rc3dSpin {
+  0% {
+    transform: rotateX(-12deg) rotateY(0deg);
+  }
+  100% {
+    transform: rotateX(-12deg) rotateY(360deg);
+  }
+}
+
+/* Individual 3D Card */
+.rc3d-card {
+  position: absolute;
+  inset: 0;
+  width: 220px;
+  height: 290px;
+  border-radius: 16px;
+  background: #0F1F17;
+  border: 1px solid rgba(199, 203, 184, 0.28);
+  box-shadow: 0 16px 40px rgba(15, 31, 23, 0.45), 0 0 0 1px rgba(62, 90, 63, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.rc3d-card:hover {
+  border-color: #C7CBB8;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 25px rgba(62, 90, 63, 0.5);
+}
+
+/* Radial 3D positioning for 6 cards (60deg increments, R=240px) */
+.rc3d-card-0 { transform: rotateY(0deg) translateZ(240px); }
+.rc3d-card-1 { transform: rotateY(60deg) translateZ(240px); }
+.rc3d-card-2 { transform: rotateY(120deg) translateZ(240px); }
+.rc3d-card-3 { transform: rotateY(180deg) translateZ(240px); }
+.rc3d-card-4 { transform: rotateY(240deg) translateZ(240px); }
+.rc3d-card-5 { transform: rotateY(300deg) translateZ(240px); }
+
+/* Card Top Window Bar (mimicking browser/app preview from reference video) */
+.rc3d-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(30, 58, 46, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(199, 203, 184, 0.15);
+  flex-shrink: 0;
+}
+
+.rc3d-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.rc3d-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.rc3d-dot-red    { background: #ff5f56; }
+.rc3d-dot-yellow { background: #ffbd2e; }
+.rc3d-dot-green  { background: #27c93f; }
+
+.rc3d-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #C7CBB8;
+  background: rgba(15, 31, 23, 0.6);
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(199, 203, 184, 0.2);
+  letter-spacing: 0.3px;
+}
+
+/* Card Photo Image Body */
+.rc3d-card-media {
+  position: relative;
+  width: 100%;
+  height: 165px;
+  overflow: hidden;
+  background: #1E3A2E;
+}
+
+.rc3d-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.rc3d-card:hover .rc3d-img {
+  transform: scale(1.08);
+}
+
+/* Subtle image gradient overlay */
+.rc3d-img-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 60%, rgba(15, 31, 23, 0.8) 100%);
+  pointer-events: none;
+}
+
+/* Card Bottom Info */
+.rc3d-card-footer {
+  padding: 10px 12px;
+  background: #0F1F17;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  justify-content: center;
+  border-top: 1px solid rgba(62, 90, 63, 0.2);
+}
+
+.rc3d-title {
+  color: #F1F3EB;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.2px;
+}
+
+.rc3d-loc {
+  color: #6B7F67;
+  font-size: 11px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Floating interactive pill hint underneath */
+.rc3d-hint {
+  position: absolute;
+  bottom: -2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(15, 31, 23, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(199, 203, 184, 0.2);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #C7CBB8;
+  pointer-events: none;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.rc3d-stage:hover .rc3d-hint {
+  opacity: 1;
+  color: #FFFFFF;
+  border-color: #3E5A3F;
+}
+
+/* Responsive Scaling */
+@media (max-width: 1024px) {
+  .rc3d-stage {
+    max-width: 440px;
+    height: 380px;
+    perspective: 900px;
+  }
+  .rc3d-cylinder {
+    width: 190px;
+    height: 255px;
+  }
+  .rc3d-card {
+    width: 190px;
+    height: 255px;
+  }
+  .rc3d-card-0 { transform: rotateY(0deg) translateZ(200px); }
+  .rc3d-card-1 { transform: rotateY(60deg) translateZ(200px); }
+  .rc3d-card-2 { transform: rotateY(120deg) translateZ(200px); }
+  .rc3d-card-3 { transform: rotateY(180deg) translateZ(200px); }
+  .rc3d-card-4 { transform: rotateY(240deg) translateZ(200px); }
+  .rc3d-card-5 { transform: rotateY(300deg) translateZ(200px); }
+  .rc3d-card-media { height: 140px; }
+}
+
+@media (max-width: 820px) {
+  .rc3d-stage {
+    margin: 30px auto 0;
+    max-width: 360px;
+    height: 320px;
+    perspective: 750px;
+  }
+  .rc3d-cylinder {
+    width: 160px;
+    height: 220px;
+  }
+  .rc3d-card {
+    width: 160px;
+    height: 220px;
+    border-radius: 12px;
+  }
+  .rc3d-card-0 { transform: rotateY(0deg) translateZ(165px); }
+  .rc3d-card-1 { transform: rotateY(60deg) translateZ(165px); }
+  .rc3d-card-2 { transform: rotateY(120deg) translateZ(165px); }
+  .rc3d-card-3 { transform: rotateY(180deg) translateZ(165px); }
+  .rc3d-card-4 { transform: rotateY(240deg) translateZ(165px); }
+  .rc3d-card-5 { transform: rotateY(300deg) translateZ(165px); }
+  .rc3d-card-media { height: 115px; }
+  .rc3d-title { font-size: 11.5px; }
+  .rc3d-loc { font-size: 10px; }
+}

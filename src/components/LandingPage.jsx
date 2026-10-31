@@ -1,7 +1,8 @@
 import { useState } from "react";
 import Navbar from "./Navbar";
 import AuthModal from "./AuthModal";
-import { AESTHETIC_SHOWCASE_PHOTOS } from "../data/photos";
+import RevolvingCarousel3D from "./RevolvingCarousel3D";
+import defaultPhotos from "../data/photos";
 
 function LandingPage({ darkMode, toggleDarkMode }) {
   const [authModal, setAuthModal] = useState({ open: false, tab: "register" });
@@ -59,23 +60,11 @@ function LandingPage({ darkMode, toggleDarkMode }) {
           </div>
         </div>
 
-        {/* Floating preview cards with aesthetic, unique photos */}
-        <div className="lp-preview-cards" aria-hidden="true">
-          {AESTHETIC_SHOWCASE_PHOTOS.map((item, i) => (
-            <div className={`lp-card lp-card-${i + 1}`} key={item.id}>
-              <img
-                src={item.image}
-                alt={item.title}
-                className="lp-card-img"
-                loading="eager"
-              />
-              <div className="lp-card-body">
-                <span>{item.badge}</span>
-                <p>{item.title}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* 3D Revolving Cylinder Carousel Showcase (as shown in reference video) */}
+        <RevolvingCarousel3D
+          items={defaultPhotos}
+          onSelectCard={openLogin}
+        />
       </section>
 
       {/* ── FEATURES ──────────────────────── */}
