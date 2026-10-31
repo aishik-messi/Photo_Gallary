@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { resolveImageUrl } from "../config";
 import AuthModal from "./AuthModal";
+import ThemeToggleSwitch from "./ThemeToggleSwitch";
 
 function Navbar({
   darkMode,
@@ -79,16 +80,12 @@ function Navbar({
 
         {/* Right side controls (Desktop) */}
         <div className="nav-actions">
-          {/* Dark Mode Button */}
-          <button
-            className="dark-mode-btn"
-            onClick={toggleDarkMode}
-            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            type="button"
-          >
-            {darkMode ? "☀️" : "🌙"}
-            <span>{darkMode ? "Light" : "Dark"}</span>
-          </button>
+          {/* Animated Sky Theme Toggle */}
+          <ThemeToggleSwitch
+            darkMode={darkMode}
+            toggleDarkMode={toggleDarkMode}
+            size="md"
+          />
 
           {/* Auth section */}
           {user ? (
@@ -199,15 +196,17 @@ function Navbar({
         <div className="nav-mobile-divider" />
 
         <div className="nav-mobile-actions">
-          {/* Dark Mode Toggle in Mobile Drawer */}
-          <button
-            className="nav-mobile-dark-btn"
-            onClick={toggleDarkMode}
-            type="button"
-          >
-            <span className="nav-link-icon">{darkMode ? "☀️" : "🌙"}</span>
-            <span>Switch to {darkMode ? "Light Mode" : "Dark Mode"}</span>
-          </button>
+          {/* Animated Sky Theme Toggle in Mobile Drawer */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", background: "rgba(108, 99, 255, 0.08)", borderRadius: "12px", marginBottom: "12px" }}>
+            <span style={{ fontSize: "14px", fontWeight: "600", color: darkMode ? "#f1f5f9" : "#334155" }}>
+              {darkMode ? "Night Mode" : "Day Mode"}
+            </span>
+            <ThemeToggleSwitch
+              darkMode={darkMode}
+              toggleDarkMode={toggleDarkMode}
+              size="sm"
+            />
+          </div>
 
           {/* Mobile Auth actions */}
           {user ? (

@@ -14,6 +14,7 @@ import AddPhoto from "./AddPhoto";
 import ImageModal from "./ImageModal";
 import ProfileModal from "./ProfileModal";
 import PhotoKeeperMascot from "./PhotoKeeperMascot";
+import ThemeToggleSwitch from "./ThemeToggleSwitch";
 import "./NewDashboard.css";
 
 function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
@@ -701,6 +702,13 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
               )}
             </div>
 
+            {/* Animated Day / Night Switch */}
+            <ThemeToggleSwitch
+              darkMode={darkMode}
+              toggleDarkMode={toggleDarkMode}
+              size="sm"
+            />
+
             {/* Notification Bell */}
             <div className="nd-popover-anchor">
               <button
@@ -785,16 +793,16 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                   >
                     👤 My Profile
                   </button>
-                  <button
-                    className="nd-menu-item"
-                    onClick={() => {
-                      toggleDarkMode();
-                      setUserMenuOpen(false);
-                    }}
-                    type="button"
-                  >
-                    {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
-                  </button>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", borderBottom: "1px solid var(--nd-sidebar-border)" }}>
+                    <span style={{ fontSize: "13px", fontWeight: "600", color: "var(--nd-text-main)" }}>
+                      {darkMode ? "Night Mode" : "Day Mode"}
+                    </span>
+                    <ThemeToggleSwitch
+                      darkMode={darkMode}
+                      toggleDarkMode={toggleDarkMode}
+                      size="sm"
+                    />
+                  </div>
                   {onGoToLanding && (
                     <button
                       className="nd-menu-item"
