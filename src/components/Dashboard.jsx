@@ -808,7 +808,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
               <input
                 type="text"
                 className="nd-search-input"
-                placeholder="Search photos..."
+                placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 id="search-input"
@@ -1377,7 +1377,8 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                       <button
                         type="button"
                         className="nd-fli-action-btn"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setCreateModalInitialCategory(album.title);
                           setCreateModalOpen(true);
                         }}
@@ -1387,7 +1388,8 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                       <button
                         type="button"
                         className="nd-fli-open-btn"
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setSelectedFilter(album.title);
                           setActiveTab("Photos");
                         }}
@@ -1399,7 +1401,10 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                           type="button"
                           className="nd-fli-delete-btn"
                           title={`Delete folder "${album.title}"`}
-                          onClick={() => onRequestDeleteFolder(album.title)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onRequestDeleteFolder(album.title);
+                          }}
                         >
                           🗑️
                         </button>
