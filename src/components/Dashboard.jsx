@@ -215,7 +215,19 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
       const saved = localStorage.getItem("dynamic_photos");
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Check if user has uploaded custom photos
+          const defaultIds = new Set(defaultPhotos.map((dp) => dp.id));
+          const userCustomPhotos = parsed.filter((p) => !defaultIds.has(p.id));
+          // If only old defaults (length < 17 and no custom uploads), use the full 17 new defaults
+          if (userCustomPhotos.length === 0 && parsed.length < defaultPhotos.length) {
+            return defaultPhotos;
+          }
+          // Backfill missing default photos to keep the 5-column mosaic rhythm complete
+          const existingIds = new Set(parsed.map((p) => p.id));
+          const missingDefaults = defaultPhotos.filter((dp) => !existingIds.has(dp.id));
+          return [...parsed, ...missingDefaults];
+        }
       }
       return defaultPhotos;
     } catch {
@@ -574,6 +586,35 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
       })
       .filter(Boolean);
   }, [albums, photos, selectedFilter, search, favorites, user, currentUserAvatar]);
+
+  /* ── Continuous Photo Store Stream (Matching 5-Column Grid Structure) ── */
+  const displayedPhotos = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    let list = photos;
+
+    if (selectedFilter === "Favorites") {
+      list = photos.filter((p) => favorites.includes(p.id));
+    } else if (selectedFilter === "All Photos") {
+      list = photos;
+    } else {
+      list = photos.filter(
+        (p) => (p.category || p.album || "").trim().toLowerCase() === selectedFilter.toLowerCase()
+      );
+    }
+
+    if (q) {
+      list = list.filter((p) => {
+        const matchTitle = p.title?.toLowerCase().includes(q);
+        const matchDesc = p.description?.toLowerCase().includes(q);
+        const matchCat = p.category?.toLowerCase().includes(q);
+        const matchLoc = p.location?.toLowerCase().includes(q);
+        const matchTags = p.tags?.some((t) => t.toLowerCase().includes(q));
+        return matchTitle || matchDesc || matchCat || matchLoc || matchTags;
+      });
+    }
+
+    return list;
+  }, [photos, selectedFilter, favorites, search]);
 
   /* Close dropdowns on outside click */
   const topbarRef = useRef(null);
@@ -1007,7 +1048,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                     </button>
                   )}
                 <span className="nd-total-count">
-                  {photos.length} total photo{photos.length !== 1 ? "s" : ""}
+                  {displayedPhotos.length} photo{displayedPhotos.length !== 1 ? "s" : ""}
                 </span>
               </div>
             </div>
@@ -1027,7 +1068,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                   <div className="nd-folder-banner-info">
                     <h2 className="nd-folder-banner-title">📁 {selectedFilter}</h2>
                     <span className="nd-folder-banner-count">
-                      {photos.filter((p) => (p.category || p.album || "").trim().toLowerCase() === selectedFilter.toLowerCase()).length} photo(s)
+                      {displayedPhotos.length} photo(s)
                     </span>
                   </div>
                 </div>
@@ -1081,7 +1122,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                   ➕ Upload Your First Photo
                 </button>
               </div>
-            ) : filteredAlbums.length === 0 ? (
+            ) : displayedPhotos.length === 0 ? (
               <div className="nd-empty-state">
                 <div className="nd-empty-icon">
                   {search ? "🔍" : selectedFilter === "Favorites" ? "❤️" : "📁"}
@@ -1138,90 +1179,68 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                 )}
               </div>
             ) : (
-              /* Grouped Dynamic Album Sections */
-              <div className="nd-sections-container">
-                {filteredAlbums.map((album) => {
-                  const featured = album.featuredPhoto;
-                  const isFeaturedLiked = featured && favorites.includes(featured.id);
-                  const thumbnails = album.photos || [];
+              /* Photo Store Mosaic Grid Structure (Matching Reference 5-Column Grid) */
+              <div className="nd-mosaic-grid">
+                {displayedPhotos.map((photo, index) => {
+                  const isLiked = favorites.includes(photo.id);
+                  // Feature card at index 13 (rows 3-4 cols 4-5) or if explicitly marked
+                  const isFeatureCard = photo.isFeatured || (displayedPhotos.length >= 14 && index % 17 === 13);
+                  const isVideo = Boolean(photo.videoUrl || photo.isVideo);
 
                   return (
-                    <section key={album.id} className="nd-section">
-                      {/* Section Header */}
-                      <div className="nd-section-header">
-                        <h2 className="nd-section-title">{album.title}</h2>
-                        <div className="nd-section-meta">
-                          <span className="nd-meta-text">
-                            {album.date} · {album.photoCount} Photo{album.photoCount !== 1 ? "s" : ""}
-                          </span>
-                          <img
-                            src={album.author?.avatar || currentUserAvatar}
-                            alt={album.author?.name || "Author"}
-                            className="nd-meta-avatar"
-                            title={`Uploaded by ${album.author?.name || "Member"}`}
-                          />
-                        </div>
-                      </div>
+                    <div
+                      key={photo.id || `photo_${index}`}
+                      className={`nd-grid-card ${isFeatureCard ? "nd-grid-card--feature" : ""}`}
+                      onClick={() => openPhotoModal(photo)}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <div className="nd-grid-card-inner">
+                        <img
+                          src={photo.image || photo.imageUrl}
+                          alt={photo.title || "Photo"}
+                          className="nd-card-img"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.src = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
+                          }}
+                        />
 
-                      {/* Mosaic Grid Layout */}
-                      <div className="nd-mosaic-grid">
-                        {/* 1. Large Feature Card */}
-                        {featured && (
-                          <div
-                            className="nd-feature-card"
-                            onClick={() => openPhotoModal(featured)}
-                          >
-                            <img
-                              src={featured.image}
-                              alt={featured.title}
-                              className="nd-card-img"
-                              loading="lazy"
-                            />
-                            <div className="nd-card-overlay">
-                              <span className="nd-card-title">{featured.title}</span>
-                              <button
-                                className={`nd-like-btn ${isFeaturedLiked ? "liked" : ""}`}
-                                onClick={(e) => toggleFavorite(featured.id, e)}
-                                title={isFeaturedLiked ? "Remove favorite" : "Add to favorites"}
-                                type="button"
-                              >
-                                {isFeaturedLiked ? "❤️" : "🤍"}
-                              </button>
-                            </div>
+                        {/* Video indicator badge */}
+                        {isVideo && (
+                          <div className="nd-card-video-pill">
+                            <span>▶</span> Video
                           </div>
                         )}
 
-                        {/* 2. Small Thumbnails */}
-                        {thumbnails.map((photo) => {
-                          const isLiked = favorites.includes(photo.id);
-                          return (
-                            <div
-                              key={photo.id}
-                              className="nd-thumb-card"
-                              onClick={() => openPhotoModal(photo)}
+                        {/* Hover Overlay */}
+                        <div className="nd-card-overlay">
+                          <div className="nd-card-overlay-top">
+                            <span className="nd-card-badge">
+                              {photo.category || "My Photos"}
+                            </span>
+                            <button
+                              className={`nd-like-btn ${isLiked ? "liked" : ""}`}
+                              onClick={(e) => toggleFavorite(photo.id, e)}
+                              title={isLiked ? "Remove favorite" : "Add to favorites"}
+                              type="button"
+                              aria-label={isLiked ? "Unlike photo" : "Like photo"}
                             >
-                              <img
-                                src={photo.image}
-                                alt={photo.title}
-                                className="nd-card-img"
-                                loading="lazy"
-                              />
-                              <div className="nd-card-overlay">
-                                <span className="nd-card-title">{photo.title}</span>
-                                <button
-                                  className={`nd-like-btn nd-like-btn--small ${isLiked ? "liked" : ""}`}
-                                  onClick={(e) => toggleFavorite(photo.id, e)}
-                                  title={isLiked ? "Remove favorite" : "Add to favorites"}
-                                  type="button"
-                                >
-                                  {isLiked ? "❤️" : "🤍"}
-                                </button>
-                              </div>
+                              {isLiked ? "❤️" : "🤍"}
+                            </button>
+                          </div>
+
+                          <div className="nd-card-overlay-bottom">
+                            <div className="nd-card-info">
+                              <span className="nd-card-title">{photo.title || "Untitled"}</span>
+                              {photo.location && (
+                                <span className="nd-card-location">📍 {photo.location}</span>
+                              )}
                             </div>
-                          );
-                        })}
+                          </div>
+                        </div>
                       </div>
-                    </section>
+                    </div>
                   );
                 })}
               </div>

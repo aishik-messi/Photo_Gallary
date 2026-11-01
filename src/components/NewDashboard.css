@@ -1195,32 +1195,67 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-/* ── Mosaic Feature Grid (7 columns layout) ────────── */
+/* ── Photo Store Mosaic Grid (5-Column Layout matching reference) ── */
 .nd-mosaic-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: var(--nd-card-gap);
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  grid-auto-flow: dense;
   width: 100%;
 }
 
-/* 1. Large Feature Card on Left */
+/* Individual Grid Card */
+.nd-grid-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background-color: var(--nd-promo-bg);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease;
+}
+
+.nd-grid-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  z-index: 2;
+}
+
+/* 2x2 Large Feature Card spanning 2 columns wide x 2 rows tall */
+.nd-grid-card--feature {
+  grid-column: span 2;
+  grid-row: span 2;
+  aspect-ratio: auto;
+  height: 100%;
+  min-height: 100%;
+}
+
+.nd-grid-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Legacy Feature & Thumb card support */
 .nd-feature-card {
   grid-column: span 2;
   grid-row: span 2;
-  aspect-ratio: 1 / 1;
-  border-radius: var(--nd-radius);
+  aspect-ratio: auto;
+  height: 100%;
+  border-radius: 8px;
   overflow: hidden;
   position: relative;
   cursor: pointer;
   background-color: var(--nd-promo-bg);
 }
 
-/* 2. Small Thumbnail Cards */
 .nd-thumb-card {
   grid-column: span 1;
   grid-row: span 1;
-  aspect-ratio: 1 / 1;
-  border-radius: var(--nd-radius);
+  aspect-ratio: 4 / 3;
+  border-radius: 8px;
   overflow: hidden;
   position: relative;
   cursor: pointer;
@@ -1235,56 +1270,131 @@
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.nd-grid-card:hover .nd-card-img,
 .nd-feature-card:hover .nd-card-img,
 .nd-thumb-card:hover .nd-card-img {
   transform: scale(1.04);
+}
+
+/* Video badge */
+.nd-card-video-pill {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(15, 31, 23, 0.75);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+  pointer-events: none;
 }
 
 /* Hover overlay & like button */
 .nd-card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0) 50%);
+  background: linear-gradient(to top, rgba(15, 31, 23, 0.85) 0%, rgba(15, 31, 23, 0.2) 45%, transparent 100%);
   opacity: 0;
   transition: opacity 0.22s ease;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
   justify-content: space-between;
-  padding: 8px;
+  padding: 10px 12px;
   pointer-events: none;
 }
 
+.nd-grid-card:hover .nd-card-overlay,
 .nd-feature-card:hover .nd-card-overlay,
 .nd-thumb-card:hover .nd-card-overlay {
   opacity: 1;
+}
+
+.nd-card-overlay > * {
   pointer-events: auto;
+}
+
+.nd-card-overlay-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+}
+
+.nd-card-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: rgba(15, 31, 23, 0.65);
+  backdrop-filter: blur(6px);
+  color: #fff;
+}
+
+.nd-card-overlay-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.nd-card-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .nd-card-title {
   color: #ffffff;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 75%;
+  max-width: 100%;
+}
+
+.nd-card-location {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nd-like-btn {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   border: none;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: transform 0.15s ease, background 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s ease, background 0.18s ease;
   margin-left: auto;
+  flex-shrink: 0;
+}
+
+.nd-like-btn:hover {
+  transform: scale(1.15);
+  background: #ffffff;
+}
+
+.nd-like-btn.liked {
+  background: #ff4757;
+  color: #ffffff;
 }
 
 .nd-like-btn--small {
@@ -1840,9 +1950,9 @@
 }
 
 /* ── RESPONSIVE ADAPTATIONS ───────────────────────── */
-@media (max-width: 1200px) {
+@media (max-width: 1150px) {
   .nd-mosaic-grid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -1876,18 +1986,22 @@
   }
 
   .nd-mosaic-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 580px) {
   .nd-mosaic-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
   }
 
+  .nd-grid-card--feature,
   .nd-feature-card {
     grid-column: span 2;
-    grid-row: span 2;
+    grid-row: span 1;
+    aspect-ratio: 16 / 9;
   }
 
   .nd-search-input {
