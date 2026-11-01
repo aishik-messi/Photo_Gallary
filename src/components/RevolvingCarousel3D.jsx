@@ -44,11 +44,11 @@ const DEFAULT_CAROUSEL_ITEMS = [
   },
   {
     id: "rc_animals",
-    title: "Arctic Wonder",
+    title: "Savannah Majesty",
     category: "Animals",
-    badge: "🦊 Animals",
-    location: "Reykjavik, Iceland",
-    image: "https://images.unsplash.com/photo-1474511326265-ba4c95be3620?auto=format&fit=crop&w=800&q=80",
+    badge: "🦁 Animals",
+    location: "Serengeti, Tanzania",
+    image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=800&q=80",
   },
 ];
 
@@ -89,6 +89,11 @@ function RevolvingCarousel3D({ onSelectCard, items = DEFAULT_CAROUSEL_ITEMS }) {
                   alt={item.title}
                   className="rc3d-img"
                   loading="eager"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src =
+                      "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=800&q=80";
+                  }}
                 />
                 <div className="rc3d-img-overlay" />
               </div>
@@ -111,3 +116,4 @@ function RevolvingCarousel3D({ onSelectCard, items = DEFAULT_CAROUSEL_ITEMS }) {
 }
 
 export default RevolvingCarousel3D;
+
