@@ -798,84 +798,106 @@
 }
 
 .nd-dropdown-filter {
+  display: flex;
+  flex-direction: column;
   left: 0;
   right: auto;
-  min-width: 220px;
-  max-width: 290px;
-  max-height: 450px;
+  width: 250px;
+  max-width: calc(100vw - 32px);
+  max-height: 420px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 6px 0;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--nd-sidebar-bg);
+  border: 1px solid var(--nd-sidebar-border);
+  box-shadow: 0 12px 36px rgba(15, 31, 23, 0.22);
+  z-index: 1000;
 }
 
 .nd-dropdown-divider {
   height: 1px;
   background: var(--nd-sidebar-border);
-  margin: 6px 0;
-}
-
-.nd-filter-option-row {
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 100%;
-  padding: 0 4px;
+  margin: 6px 4px;
 }
 
 .nd-filter-option {
-  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
   text-align: left;
-  background: none;
+  background: transparent;
   border: none;
-  padding: 8px 14px;
-  border-radius: 4px;
-  font-size: 14px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
   color: var(--nd-text-main);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: all 0.15s ease;
+  min-height: 38px;
+}
+
+.nd-filter-opt-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.nd-filter-check {
+  font-weight: 700;
+  font-size: 13px;
+  color: #FFFFFF;
+  margin-left: 8px;
+}
+
 .nd-filter-option:hover {
-  background: #6c757d;
-  color: #ffffff;
+  background: rgba(62, 90, 63, 0.1);
+  color: #0F1F17;
 }
 
 .nd-filter-option--active {
-  background: #5f6b76;
-  color: #ffffff !important;
-  font-weight: 500;
+  background: linear-gradient(135deg, #1E3A2E 0%, #0F1F17 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 600;
 }
 
 .nd-dark .nd-filter-option:hover {
-  background: #475569;
-  color: #ffffff;
+  background: rgba(199, 203, 184, 0.12);
+  color: #F1F3EB;
 }
 
 .nd-dark .nd-filter-option--active {
-  background: #334155;
-  color: #ffffff !important;
+  background: linear-gradient(135deg, #3E5A3F 0%, #1E3A2E 100%) !important;
+  color: #FFFFFF !important;
 }
 
 .nd-filter-create-option {
-  color: var(--nd-primary);
-  font-weight: 500;
+  color: #3E5A3F;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin: 0 4px;
+  gap: 8px;
+  margin-top: 2px;
 }
 
 .nd-filter-create-option:hover {
-  background: var(--nd-primary-light);
-  color: var(--nd-primary-dark);
+  background: rgba(62, 90, 63, 0.12);
+  color: #1E3A2E;
+}
+
+.nd-dark .nd-filter-create-option {
+  color: #C7CBB8;
 }
 
 .nd-dark .nd-filter-create-option:hover {
-  background: var(--nd-primary-light);
-  color: var(--nd-primary);
+  background: rgba(199, 203, 184, 0.15);
+  color: #FFFFFF;
 }
 
 .nd-album-modal {

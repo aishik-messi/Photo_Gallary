@@ -631,7 +631,11 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside, { passive: true });
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, []);
 
   return (
@@ -995,7 +999,8 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                       }}
                       type="button"
                     >
-                      All Photos
+                      <span className="nd-filter-opt-label">📸 All Photos</span>
+                      {selectedFilter === "All Photos" && <span className="nd-filter-check">✓</span>}
                     </button>
                     <button
                       className={`nd-filter-option ${selectedFilter === "Favorites" ? "nd-filter-option--active" : ""}`}
@@ -1005,7 +1010,8 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                       }}
                       type="button"
                     >
-                      ❤️ Favorites ({favorites.length})
+                      <span className="nd-filter-opt-label">❤️ Favorites ({favorites.length})</span>
+                      {selectedFilter === "Favorites" && <span className="nd-filter-check">✓</span>}
                     </button>
 
                     <div className="nd-dropdown-divider" />
@@ -1023,7 +1029,10 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                           }}
                           type="button"
                         >
-                          {cat}
+                          <span className="nd-filter-opt-label">
+                            {getCategoryIcon(cat)} {cat}
+                          </span>
+                          {isSelected && <span className="nd-filter-check">✓</span>}
                         </button>
                       );
                     })}
@@ -1039,7 +1048,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                       }}
                       type="button"
                     >
-                      + Create New Album...
+                      <span className="nd-filter-opt-label">➕ Create New Album...</span>
                     </button>
                   </div>
                 )}
