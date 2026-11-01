@@ -641,8 +641,20 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
         <div className="nd-sidebar-inner">
           {/* Logo Brand Header */}
           <div className="nd-sidebar-logo">
-            <img src="/logo.png" alt="Photo Gallery Logo" className="nd-logo-img" />
-            <span className="nd-logo-text">PhotoGallery</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <img src="/logo.png" alt="Photo Gallery Logo" className="nd-logo-img" />
+              <span className="nd-logo-text">PhotoGallery</span>
+            </div>
+            {mobileSidebarOpen && (
+              <button
+                className="nd-sidebar-close-btn"
+                onClick={() => setMobileSidebarOpen(false)}
+                aria-label="Close menu"
+                type="button"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           {/* Top: Create New / Add Photo Pill Button */}

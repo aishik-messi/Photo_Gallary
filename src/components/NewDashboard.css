@@ -1949,6 +1949,32 @@
   overflow-y: auto;
 }
 
+/* Mobile Sidebar Close Button */
+.nd-sidebar-close-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: var(--nd-text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  line-height: 1;
+  transition: all 0.2s ease;
+}
+
+.nd-sidebar-close-btn:hover {
+  background: var(--nd-promo-bg);
+  color: var(--nd-text-heading);
+}
+
+@media (max-width: 900px) {
+  .nd-sidebar-close-btn {
+    display: block;
+    margin-left: auto;
+  }
+}
+
 /* ── RESPONSIVE ADAPTATIONS ───────────────────────── */
 @media (max-width: 1150px) {
   .nd-mosaic-grid {
@@ -1962,8 +1988,11 @@
     left: 0;
     top: 0;
     bottom: 0;
+    width: 270px;
+    max-width: 85vw;
     transform: translateX(-100%);
     box-shadow: var(--nd-shadow-lg);
+    z-index: 95;
   }
 
   .nd-sidebar--open {
@@ -1973,8 +2002,9 @@
   .nd-mobile-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 85;
+    background: rgba(15, 31, 23, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 90;
   }
 
   .nd-hamburger-btn {
@@ -1982,7 +2012,7 @@
   }
 
   .nd-main {
-    padding: 16px 20px 40px;
+    padding: 16px 18px 40px;
   }
 
   .nd-mosaic-grid {
@@ -1991,10 +2021,96 @@
   }
 }
 
+/* Android & Mobile Viewports (<= 580px) */
 @media (max-width: 580px) {
+  .nd-main {
+    padding: 12px 10px 40px;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .nd-topbar {
+    gap: 8px;
+    height: auto;
+    min-height: 44px;
+    margin-bottom: 14px;
+  }
+
+  .nd-topbar-controls {
+    gap: 6px;
+  }
+
+  .nd-search-box {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .nd-search-input {
+    width: 100% !important;
+    max-width: 120px;
+    font-size: 12px;
+    padding: 6px 8px 6px 28px;
+  }
+
+  .nd-search-input:focus {
+    max-width: 140px;
+  }
+
+  .nd-search-icon {
+    left: 8px;
+    font-size: 12px;
+  }
+
+  .nd-title-row {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .nd-view-title {
+    font-size: 19px;
+  }
+
+  .nd-total-count {
+    font-size: 11.5px;
+  }
+
+  .nd-folder-banner {
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    gap: 8px;
+  }
+
+  .nd-folder-banner-left {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .nd-folder-banner-actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .nd-folder-back-btn {
+    padding: 6px 10px;
+    font-size: 11.5px;
+  }
+
+  .nd-folder-banner-title {
+    font-size: 16px;
+  }
+
+  /* 2-Column Photo Store Grid on Mobile */
   .nd-mosaic-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
+    width: 100%;
+  }
+
+  .nd-grid-card {
+    border-radius: 8px;
   }
 
   .nd-grid-card--feature,
@@ -2004,16 +2120,89 @@
     aspect-ratio: 16 / 9;
   }
 
+  /* Touch overlay on Android */
+  .nd-card-overlay {
+    opacity: 1;
+    background: linear-gradient(to top, rgba(15, 31, 23, 0.78) 0%, rgba(15, 31, 23, 0) 52%);
+    padding: 8px;
+  }
+
+  .nd-card-overlay-top {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .nd-card-badge {
+    display: none;
+  }
+
+  .nd-like-btn {
+    width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+
+  .nd-card-title {
+    font-size: 11.5px;
+    line-height: 1.2;
+  }
+
+  .nd-card-location {
+    display: none;
+  }
+
+  /* Album List Items on Mobile */
+  .nd-folder-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .nd-fli-left {
+    width: 100%;
+  }
+
+  .nd-fli-right {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .nd-fli-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .nd-fli-action-btn,
+  .nd-fli-open-btn {
+    padding: 5px 12px;
+    font-size: 11.5px;
+  }
+}
+
+/* Small Android Phones (<= 380px) */
+@media (max-width: 380px) {
+  .nd-mosaic-grid {
+    gap: 6px;
+  }
+
   .nd-search-input {
-    width: 140px;
+    max-width: 95px;
+    font-size: 11px;
   }
 
   .nd-search-input:focus {
-    width: 170px;
+    max-width: 115px;
   }
 
   .nd-view-title {
-    font-size: 22px;
+    font-size: 17px;
+  }
+
+  .nd-card-title {
+    font-size: 10.5px;
   }
 }
 

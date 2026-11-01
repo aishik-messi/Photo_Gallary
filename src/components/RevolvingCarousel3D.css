@@ -272,3 +272,76 @@
   .rc3d-loc { font-size: 10px; }
 }
 
+/* Android & Mobile Viewports (<= 600px) */
+@media (max-width: 600px) {
+  .rc3d-stage {
+    margin: 20px auto 10px;
+    max-width: 320px;
+    height: 260px;
+    perspective: 580px;
+    width: 100%;
+  }
+  .rc3d-cylinder {
+    width: 125px;
+    height: 175px;
+  }
+  .rc3d-card {
+    width: 125px;
+    height: 175px;
+    border-radius: 10px;
+  }
+  .rc3d-card-0 { transform: rotateY(0deg) translateZ(112px); }
+  .rc3d-card-1 { transform: rotateY(60deg) translateZ(112px); }
+  .rc3d-card-2 { transform: rotateY(120deg) translateZ(112px); }
+  .rc3d-card-3 { transform: rotateY(180deg) translateZ(112px); }
+  .rc3d-card-4 { transform: rotateY(240deg) translateZ(112px); }
+  .rc3d-card-5 { transform: rotateY(300deg) translateZ(112px); }
+  .rc3d-card-media { height: 88px; }
+  .rc3d-card-header { padding: 4px 8px; }
+  .rc3d-dot { width: 5px; height: 5px; }
+  .rc3d-badge { font-size: 9px; padding: 2px 6px; }
+  .rc3d-card-footer { padding: 6px 8px; }
+  .rc3d-title { font-size: 10.5px; }
+  .rc3d-loc { font-size: 9px; }
+  .rc3d-hint {
+    font-size: 10px;
+    padding: 3px 10px;
+    bottom: -6px;
+  }
+  .rc3d-floor-glow {
+    width: 250px;
+    height: 40px;
+  }
+}
+
+/* Small Android Phones (<= 380px) */
+@media (max-width: 380px) {
+  .rc3d-stage {
+    max-width: 280px;
+    height: 230px;
+    perspective: 500px;
+  }
+  .rc3d-cylinder {
+    width: 105px;
+    height: 150px;
+  }
+  .rc3d-card {
+    width: 105px;
+    height: 150px;
+    border-radius: 8px;
+  }
+  .rc3d-card-0 { transform: rotateY(0deg) translateZ(92px); }
+  .rc3d-card-1 { transform: rotateY(60deg) translateZ(92px); }
+  .rc3d-card-2 { transform: rotateY(120deg) translateZ(92px); }
+  .rc3d-card-3 { transform: rotateY(180deg) translateZ(92px); }
+  .rc3d-card-4 { transform: rotateY(240deg) translateZ(92px); }
+  .rc3d-card-5 { transform: rotateY(300deg) translateZ(92px); }
+  .rc3d-card-media { height: 72px; }
+  .rc3d-title { font-size: 9.5px; }
+  .rc3d-loc { display: none; }
+  .rc3d-floor-glow {
+    width: 200px;
+    height: 35px;
+  }
+}
+
