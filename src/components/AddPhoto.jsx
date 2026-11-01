@@ -56,19 +56,57 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
     }
   }, [initialCategory, combinedCategories]);
 
-  /* ── Image select / drag-drop ── */
-  const applyFile = (file) => {
+  /* ── Image select / drag-drop with Canvas optimization ── */
+  const compressImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 1920;
+          let { width, height } = img;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", 0.88));
+        };
+        img.onerror = () => resolve(e.target.result);
+        img.src = e.target.result;
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const applyFile = async (file) => {
     if (!file || !file.type.startsWith("image/")) {
       setUploadError("Please choose a valid image file (PNG, JPG, WEBP).");
       return;
     }
     setImageFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setImagePreview(e.target.result);
-    };
-    reader.readAsDataURL(file);
-    setUploadError("");
+    try {
+      const optimizedDataUrl = await compressImage(file);
+      setImagePreview(optimizedDataUrl || URL.createObjectURL(file));
+      setUploadError("");
+    } catch {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+      setUploadError("");
+    }
   };
 
   const handleImageChange = (e) => applyFile(e.target.files[0]);
@@ -111,14 +149,14 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
     try {
       let createdPhoto = null;
 
-      if (token) {
+      if (token && imageFile) {
         try {
           const formData = new FormData();
-          formData.append("title", title);
-          formData.append("description", description);
+          formData.append("title", title.trim());
+          formData.append("description", description.trim());
           formData.append("category", finalCategory);
           formData.append("tags", tags);
-          if (location) formData.append("location", location);
+          if (location) formData.append("location", location.trim());
           formData.append("image", imageFile);
 
           const res = await fetch(`${BACKEND_URL}/api/photos`, {
@@ -147,9 +185,15 @@ function AddPhoto({ onAddPhoto, customCategories = [], categories = null, onAddC
           tags: tags ? tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
           imageUrl: imagePreview,
           image: imagePreview,
+          isCustom: true,
           createdAt: new Date().toISOString(),
           user: user || { username: "You" },
         };
+      } else {
+        createdPhoto.isCustom = true;
+        if (!createdPhoto.image) {
+          createdPhoto.image = createdPhoto.imageUrl || imagePreview;
+        }
       }
 
       // If a new custom album was specified, notify parent to add to menu

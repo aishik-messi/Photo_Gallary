@@ -14,8 +14,11 @@ function ImageModal({
     return null;
   }
 
-  const isFavorite =
-    favorites.includes(photo.id);
+  const isFavorite = favorites.includes(photo.id);
+  const baseLikes = typeof photo.likesCount === "number"
+    ? photo.likesCount
+    : (Array.isArray(photo.likes) ? photo.likes.length : (photo.initialLikes || 0));
+  const likeCount = baseLikes + (isFavorite && !Array.isArray(photo.likes) ? 1 : 0);
 
   return (
 
@@ -116,8 +119,11 @@ function ImageModal({
               onClick={() =>
                 toggleFavorite(photo.id)
               }
+              title={isFavorite ? "Remove favorite" : "Add to favorites"}
+              type="button"
             >
-              {isFavorite ? "❤️" : "🤍"}
+              <span>{isFavorite ? "❤️" : "🤍"}</span>
+              <span className="modal-like-count">{likeCount}</span>
             </button>
           </div>
 

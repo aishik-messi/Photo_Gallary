@@ -15,6 +15,7 @@ export const AESTHETIC_SHOWCASE_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
     description: "Misty mountain peaks mirroring across crystal turquoise glacial waters at sunrise.",
     date: "Oct 24, 2026",
+    initialLikes: 41,
     user: { username: "Curated" },
   },
   {
@@ -28,6 +29,7 @@ export const AESTHETIC_SHOWCASE_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
     description: "Iconic ocean vistas and whitewashed shoreline at golden hour.",
     date: "Oct 26, 2026",
+    initialLikes: 28,
     user: { username: "Curated" },
   },
   {
@@ -41,6 +43,7 @@ export const AESTHETIC_SHOWCASE_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1200&q=80",
     description: "Ethereal sunbeams filtering through ancient redwood pines during sunset golden hour.",
     date: "Oct 28, 2026",
+    initialLikes: 33,
     user: { username: "Curated" },
   },
   {
@@ -54,6 +57,7 @@ export const AESTHETIC_SHOWCASE_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=1200&q=80",
     description: "Neon sign glow reflecting across wet night asphalt and futuristic glass skyscrapers.",
     date: "Oct 29, 2026",
+    initialLikes: 37,
     user: { username: "Curated" },
   },
   {
@@ -67,6 +71,7 @@ export const AESTHETIC_SHOWCASE_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=80",
     description: "Velvety fresh roasted espresso and warm flaky morning croissants in a rustic bistro.",
     date: "Oct 29, 2026",
+    initialLikes: 45,
     user: { username: "Curated" },
   },
   {
@@ -80,6 +85,7 @@ export const AESTHETIC_SHOWCASE_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1200&q=80",
     description: "Majestic lion portrait bathed in golden hour light across the Serengeti savanna.",
     date: "Oct 30, 2026",
+    initialLikes: 64,
     user: { username: "Curated" },
   },
 ];
@@ -104,6 +110,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
     description: "Sunlit laughter with best friends along the Pacific shoreline.",
     date: "Oct 22, 2026",
+    initialLikes: 14,
     user: { username: "Curated" },
   },
   {
@@ -117,6 +124,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
     description: "Peaceful ocean waves catching the warm glowing hues of sunset.",
     date: "Oct 23, 2026",
+    initialLikes: 28,
     user: { username: "Curated" },
   },
   {
@@ -130,6 +138,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=80",
     description: "Vibrant pink feathers and elegant forms in natural sanctuary.",
     date: "Oct 24, 2026",
+    initialLikes: 19,
     user: { username: "Curated" },
   },
   {
@@ -143,6 +152,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=800&q=80",
     description: "Calm evening silhouette against deep crimson and violet skies.",
     date: "Oct 25, 2026",
+    initialLikes: 32,
     user: { username: "Curated" },
   },
   {
@@ -156,6 +166,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=800&q=80",
     description: "Frothing emerald and cobalt waves crashing on rugged sea rocks.",
     date: "Oct 25, 2026",
+    initialLikes: 21,
     user: { username: "Curated" },
   },
 
@@ -171,6 +182,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=80",
     description: "Muted botanical greens and organic forms captured in natural light.",
     date: "Oct 26, 2026",
+    initialLikes: 17,
     user: { username: "Curated" },
   },
   {
@@ -184,6 +196,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80",
     description: "Velvety fresh roasted espresso and warm flaky morning croissants.",
     date: "Oct 26, 2026",
+    initialLikes: 45,
     user: { username: "Curated" },
   },
   {
@@ -197,6 +210,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
     description: "Fresh farm-to-table sandwich layered with crisp greens and herbs.",
     date: "Oct 27, 2026",
+    initialLikes: 26,
     user: { username: "Curated" },
   },
   {
@@ -210,6 +224,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=800&q=80",
     description: "Vibrant spectrum ribbons dancing in the golden afternoon breeze.",
     date: "Oct 27, 2026",
+    initialLikes: 38,
     user: { username: "Curated" },
   },
   {
@@ -223,6 +238,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
     description: "Warm afternoon radiance illuminating soft expressive features.",
     date: "Oct 28, 2026",
+    initialLikes: 52,
     user: { username: "Curated" },
   },
 
@@ -238,6 +254,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=800&q=80",
     description: "Majestic lion portrait bathed in golden hour light across the Serengeti savanna.",
     date: "Oct 28, 2026",
+    initialLikes: 64,
     user: { username: "Curated" },
   },
   {
@@ -251,6 +268,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
     description: "Misty mountain peaks mirroring across crystal turquoise glacial waters at sunrise.",
     date: "Oct 29, 2026",
+    initialLikes: 41,
     user: { username: "Curated" },
   },
   {
@@ -264,6 +282,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80",
     description: "Ethereal sunbeams filtering through ancient redwood pines during sunset golden hour.",
     date: "Oct 29, 2026",
+    initialLikes: 33,
     user: { username: "Curated" },
   },
 
@@ -279,6 +298,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=1200&q=85",
     description: "Warm, radiant laughter and deep companionship captured against urban textures.",
     date: "Oct 30, 2026",
+    initialLikes: 89,
     user: { username: "Curated" },
     isFeatured: true,
   },
@@ -295,6 +315,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
     description: "Joyful natural smile capturing genuine emotion in morning Mediterranean light.",
     date: "Oct 30, 2026",
+    initialLikes: 48,
     user: { username: "Curated" },
   },
   {
@@ -308,6 +329,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80",
     description: "Neon sign glow reflecting across wet night asphalt and futuristic glass skyscrapers.",
     date: "Oct 31, 2026",
+    initialLikes: 37,
     user: { username: "Curated" },
   },
   {
@@ -321,6 +343,7 @@ export const DEFAULT_PHOTOS = [
     imageUrl: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80",
     description: "Candid laughter and lifelong bond shared during a breathtaking mountain sunset.",
     date: "Oct 31, 2026",
+    initialLikes: 29,
     user: { username: "Curated" },
   },
 ];

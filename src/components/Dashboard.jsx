@@ -354,33 +354,61 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
   /* ── Complete Albums List for Albums Tab (Proper structure with "My Photos" always at the top) ── */
   const allAlbumsForTab = useMemo(() => {
     // 1. Primary "My Photos" album — ALWAYS Top (#1) with all user photos
+    const myPhotosList = photos.filter(
+      (p) =>
+        (p.category || p.album || "").trim().toLowerCase() === "my photos" ||
+        p.isCustom ||
+        p.user?.username === user?.username ||
+        p.user?.username === "You"
+    );
+    const myPhotosDisplay = myPhotosList.length > 0 ? myPhotosList : photos;
+
     const myPhotosAlbum = {
       id: "my-photos",
       title: "My Photos",
-      date: photos.length > 0 ? (photos[0].date || "Recently Updated") : "Ready for uploads",
-      photoCount: photos.length,
-      location: photos.find((p) => p.location)?.location || "",
+      date: myPhotosDisplay.length > 0 ? (myPhotosDisplay[0].date || "Recently Updated") : "Ready for uploads",
+      photoCount: myPhotosList.length > 0 ? myPhotosList.length : photos.length,
+      location: myPhotosDisplay.find((p) => p.location)?.location || "",
       author: { name: user?.username || "You", avatar: currentUserAvatar },
-      featuredPhoto: photos.length > 0 ? photos[0] : null,
-      photos: photos.slice(1),
-      allItems: photos,
+      featuredPhoto: myPhotosDisplay.length > 0 ? myPhotosDisplay[0] : null,
+      photos: myPhotosDisplay.slice(1),
+      allItems: myPhotosDisplay,
       isPrimary: true,
       isCustom: false,
     };
 
-    // 2. Active albums with photos (excluding "My Photos" which is already primary #1)
+    // 2. Favorites collection album — ALWAYS right under "My Photos" with live favorites count
+    const favPhotosList = photos.filter((p) => favorites.includes(p.id));
+    const favoritesAlbum = {
+      id: "favorites-collection",
+      title: "Favorites",
+      date: favorites.length > 0 ? `${favorites.length} saved photo${favorites.length !== 1 ? "s" : ""}` : "No favorites yet",
+      photoCount: favorites.length,
+      location: "Curated Collection",
+      author: { name: user?.username || "You", avatar: currentUserAvatar },
+      featuredPhoto: favPhotosList.length > 0 ? favPhotosList[0] : null,
+      photos: favPhotosList.slice(1),
+      allItems: favPhotosList,
+      isPrimary: false,
+      isFavorites: true,
+      isCustom: false,
+    };
+
+    // 3. Active albums with photos (excluding "My Photos" & "Favorites")
     const activeAlbums = albums.filter(
       (alb) =>
         alb.title.toLowerCase() !== "my photos" &&
+        alb.title.toLowerCase() !== "favorites" &&
         !deletedCategories.some((d) => d.toLowerCase() === alb.title.toLowerCase())
     );
 
-    // 3. Other categories ready for uploads (ordered, without "My Photos" or duplicates)
+    // 4. Other categories ready for uploads (ordered, without "My Photos" or duplicates)
     const emptyCategoryAlbums = [];
     allCategories.forEach((cat) => {
       const key = cat.toLowerCase();
       if (
         key !== "my photos" &&
+        key !== "favorites" &&
         !activeAlbums.some((a) => a.title.toLowerCase() === key) &&
         !deletedCategories.some((d) => d.toLowerCase() === key)
       ) {
@@ -400,9 +428,9 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
       }
     });
 
-    // Structured: My Photos always top, followed by active folders with photos, then other category folders
-    return [myPhotosAlbum, ...activeAlbums, ...emptyCategoryAlbums];
-  }, [albums, allCategories, deletedCategories, photos, user, currentUserAvatar]);
+    // Structured: My Photos always top, followed by Favorites, active folders, then other categories
+    return [myPhotosAlbum, favoritesAlbum, ...activeAlbums, ...emptyCategoryAlbums];
+  }, [albums, allCategories, deletedCategories, photos, favorites, user, currentUserAvatar]);
 
   /* ── Modal Lightbox State ── */
   const [selectedPhoto, setSelectedPhoto] = useState(null);
@@ -452,23 +480,30 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
   };
 
   const handleAddPhoto = (newPhoto) => {
-    const imageUrl = newPhoto.imageUrl || newPhoto.image;
+    const rawUrl = newPhoto.imageUrl || newPhoto.image;
     const cat = (newPhoto.category || "My Photos").trim();
+    const resolved = resolveImage(rawUrl);
     const normalized = {
       ...newPhoto,
       id: newPhoto._id || newPhoto.id || `photo_${Date.now()}`,
-      image: resolveImage(imageUrl),
+      image: resolved || rawUrl,
+      imageUrl: resolved || rawUrl,
       category: cat,
       album: cat,
       location: newPhoto.location || "",
       date: "Just now",
       title: newPhoto.title || "Untitled",
+      isCustom: true,
       user: newPhoto.user || (user ? { username: user.username } : { username: "You" }),
     };
 
     setPhotos((prev) => [normalized, ...prev]);
     handleAddCategory(cat);
     setCreateModalOpen(false);
+
+    // Immediately navigate to view the newly uploaded photo in Photos tab!
+    setActiveTab("Photos");
+    setSelectedFilter(cat || "My Photos");
   };
 
   const handleDeletePhoto = async (id) => {
@@ -596,6 +631,15 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
       list = photos.filter((p) => favorites.includes(p.id));
     } else if (selectedFilter === "All Photos") {
       list = photos;
+    } else if (selectedFilter.toLowerCase() === "my photos") {
+      const myPhotosList = photos.filter(
+        (p) =>
+          (p.category || p.album || "").trim().toLowerCase() === "my photos" ||
+          p.isCustom ||
+          p.user?.username === user?.username ||
+          p.user?.username === "You"
+      );
+      list = myPhotosList.length > 0 ? myPhotosList : photos;
     } else {
       list = photos.filter(
         (p) => (p.category || p.album || "").trim().toLowerCase() === selectedFilter.toLowerCase()
@@ -614,7 +658,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
     }
 
     return list;
-  }, [photos, selectedFilter, favorites, search]);
+  }, [photos, selectedFilter, favorites, search, user]);
 
   /* Close dropdowns on outside click */
   const topbarRef = useRef(null);
@@ -718,7 +762,10 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
               type="button"
             >
               <span className="nd-nav-icon">❤️</span>
-              Favorites {favorites.length > 0 ? `(${favorites.length})` : ""}
+              <span className="nd-nav-text">Favorites</span>
+              <span className="nd-folder-count-pill" style={{ marginLeft: "auto" }}>
+                {favorites.length}
+              </span>
             </button>
             <button
               className={`nd-nav-item ${activeTab === "Settings" ? "nd-nav-item--active" : ""}`}
@@ -984,7 +1031,11 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                   id="filter-dropdown-toggle"
                   aria-expanded={filterDropdownOpen}
                 >
-                  <h1 className="nd-view-title">{selectedFilter}</h1>
+                  <h1 className="nd-view-title">
+                    {selectedFilter === "Favorites"
+                      ? `Favorites (${favorites.length})`
+                      : selectedFilter}
+                  </h1>
                   <span className="nd-dropdown-chevron">▾</span>
                 </button>
 
@@ -1223,6 +1274,11 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                           className="nd-card-img"
                           loading="lazy"
                           onError={(e) => {
+                            if (!e.currentTarget.dataset.retried && photo.imageUrl && photo.imageUrl !== photo.image) {
+                              e.currentTarget.dataset.retried = "true";
+                              e.currentTarget.src = photo.imageUrl;
+                              return;
+                            }
                             e.currentTarget.src = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80";
                           }}
                         />
@@ -1247,7 +1303,8 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                               type="button"
                               aria-label={isLiked ? "Unlike photo" : "Like photo"}
                             >
-                              {isLiked ? "❤️" : "🤍"}
+                              <span className="nd-like-icon">{isLiked ? "❤️" : "🤍"}</span>
+                              <span className="nd-like-count">{(photo.initialLikes || 0) + (isLiked ? 1 : 0)}</span>
                             </button>
                           </div>
 
@@ -1370,6 +1427,11 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                           {album.isPrimary && (
                             <span className="nd-fli-primary-pill">⭐ Primary Collection</span>
                           )}
+                          {album.isFavorites && (
+                            <span className="nd-fli-primary-pill" style={{ background: "rgba(255, 71, 87, 0.15)", color: "#ff4757", borderColor: "rgba(255, 71, 87, 0.3)" }}>
+                              ❤️ Saved Collection
+                            </span>
+                          )}
                         </div>
                         <span className="nd-fli-subtitle">
                           {album.photoCount > 0
@@ -1405,7 +1467,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                       >
                         Open →
                       </button>
-                      {!album.isPrimary && album.title.toLowerCase() !== "my photos" && (
+                      {!album.isPrimary && album.title.toLowerCase() !== "my photos" && album.title.toLowerCase() !== "favorites" && (
                         <button
                           type="button"
                           className="nd-fli-delete-btn"
@@ -1447,7 +1509,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                           <span className="nd-empty-album-text">{album.title}</span>
                         </div>
                       )}
-                      {!album.isPrimary && album.title.toLowerCase() !== "my photos" && (
+                      {!album.isPrimary && album.title.toLowerCase() !== "my photos" && album.title.toLowerCase() !== "favorites" && (
                         <button
                           type="button"
                           className="nd-album-card-delete-btn"

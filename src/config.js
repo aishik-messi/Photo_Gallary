@@ -9,7 +9,12 @@ export const BACKEND_URL =
 
 export const resolveImageUrl = (url) => {
   if (!url) return "";
-  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")) {
+  if (
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    url.startsWith("data:") ||
+    url.startsWith("blob:")
+  ) {
     return url;
   }
   return `${BACKEND_URL}${url.startsWith("/") ? "" : "/"}${url}`;

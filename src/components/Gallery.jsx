@@ -1,71 +1,49 @@
 function Gallery({
   photos,
-  favorites,
+  favorites = [],
   toggleFavorite,
-  openModal
+  openModal,
 }) {
-
   return (
     <div className="gallery">
-
       {photos.map((photo, index) => {
-
-        const isFavorite =
-          favorites.includes(photo.id);
+        const isFavorite = favorites.includes(photo.id);
+        const likeCount = (photo.initialLikes || 0) + (isFavorite ? 1 : 0);
 
         return (
-
-          <div
-            className="photo-card"
-            key={photo.id}
-          >
-
+          <div className="photo-card" key={photo.id}>
             {/* Image */}
             <div
               className="image-container"
-              onClick={() => openModal(photo, index)}
+              onClick={() => openModal && openModal(photo, index)}
             >
+              <img src={photo.image || photo.imageUrl} alt={photo.title || "Photo"} />
 
-              <img
-                src={photo.image}
-                alt={photo.title}
-              />
-
-              {/* Like Button */}
+              {/* Like Button with Count */}
               <button
-                className={`like-button ${
-                  isFavorite ? "liked" : ""
-                }`}
+                className={`like-button ${isFavorite ? "liked" : ""}`}
                 onClick={(e) => {
                   e.stopPropagation();
-
-                  toggleFavorite(photo.id);
+                  if (toggleFavorite) toggleFavorite(photo.id);
                 }}
+                title={isFavorite ? "Remove favorite" : "Add to favorites"}
+                type="button"
               >
-                {isFavorite ? "❤️" : "🤍"}
+                <span>{isFavorite ? "❤️" : "🤍"}</span>
+                <span className="like-count" style={{ marginLeft: "4px", fontSize: "12px", fontWeight: "700" }}>
+                  {likeCount}
+                </span>
               </button>
-
             </div>
-
 
             {/* Photo Information */}
             <div className="photo-info">
-
-              <h3>
-                {photo.title}
-              </h3>
-
-              <p>
-                {photo.category}
-              </p>
-
+              <h3>{photo.title}</h3>
+              <p>{photo.category}</p>
             </div>
-
           </div>
-
         );
       })}
-
     </div>
   );
 }

@@ -15,6 +15,7 @@ export const DEFAULT_CATEGORIES = [
 
 export const CATEGORY_ICONS = {
   "my photos": "📸",
+  "favorites": "❤️",
   "nature": "🍃",
   "travel": "✈️",
   "family & friends": "👥",
