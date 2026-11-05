@@ -141,9 +141,9 @@ function AuthModal({ isOpen, onClose, defaultTab = "login" }) {
     // Start authenticating dial animation
     setAuthSequence({
       state: "verifying",
-      title: "Authenticating Account...",
-      subtitle: "Verifying credentials & security session",
-      successTitle: "Welcome Back!",
+      title: "Signing In...",
+      subtitle: "Authenticating your credentials with PhotoGallery",
+      successTitle: "Welcome to PhotoGallery!",
       successSubtitle: "Opening your personal photo gallery...",
       errorMessage: "",
       user: null,
@@ -189,15 +189,32 @@ function AuthModal({ isOpen, onClose, defaultTab = "login" }) {
       return setLocalError("Passwords do not match.");
     }
 
+    // Start motion graphic loader sequence for registration
+    setAuthSequence({
+      state: "verifying",
+      title: "Creating Your Account...",
+      subtitle: `Registering ${formData.username} with PhotoGallery`,
+      successTitle: "Account Created!",
+      successSubtitle: "Sending 6-digit verification code to your email...",
+      errorMessage: "",
+      isRegister: true,
+      user: null,
+      token: null,
+    });
+
     const result = await register(formData.username, formData.email, formData.password);
     if (result.success) {
-      setPendingEmail(formData.email);
-      setMode("otp");
-      setResendCooldown(60);
-      setOtpDigits(["", "", "", "", "", ""]);
-      setTimeout(() => otpRefs[0].current?.focus(), 150);
+      setAuthSequence((prev) => ({
+        ...prev,
+        state: "success",
+        isRegister: true,
+      }));
     } else {
-      setLocalError(result.error || "Registration failed.");
+      setAuthSequence((prev) => ({
+        ...prev,
+        state: "error",
+        errorMessage: result.error || "Registration failed.",
+      }));
     }
   };
 
@@ -213,8 +230,8 @@ function AuthModal({ isOpen, onClose, defaultTab = "login" }) {
       state: "verifying",
       title: "Verifying Security Code...",
       subtitle: `Validating 6-digit code for ${pendingEmail}`,
-      successTitle: "Identity Verified!",
-      successSubtitle: "Unlocking your personal photo gallery...",
+      successTitle: "Welcome to PhotoGallery!",
+      successSubtitle: "Identity verified. Unlocking your personal photo gallery...",
       errorMessage: "",
       user: null,
       token: null,
@@ -287,7 +304,7 @@ function AuthModal({ isOpen, onClose, defaultTab = "login" }) {
       state: "verifying",
       title: "Resetting Credentials...",
       subtitle: "Verifying code and securely encrypting new password",
-      successTitle: "Password Updated!",
+      successTitle: "Welcome to PhotoGallery!",
       successSubtitle: "Credentials saved. Opening your gallery...",
       errorMessage: "",
       user: null,
@@ -337,6 +354,16 @@ function AuthModal({ isOpen, onClose, defaultTab = "login" }) {
 
   /* ── Complete authentication when dial animation finishes ── */
   const handleAuthComplete = () => {
+    if (authSequence?.isRegister) {
+      setAuthSequence(null);
+      setPendingEmail(formData.email);
+      setMode("otp");
+      setResendCooldown(60);
+      setOtpDigits(["", "", "", "", "", ""]);
+      setTimeout(() => otpRefs[0].current?.focus(), 150);
+      return;
+    }
+
     if (authSequence && authSequence.user && authSequence.token) {
       completeAuth(authSequence.user, authSequence.token);
     }
