@@ -9,7 +9,13 @@ import {
   getDeletedCategories,
   saveDeletedCategories,
 } from "../data/categories";
-import defaultPhotos from "../data/photos";
+
+const isStaticPhoto = (p) => {
+  if (!p) return true;
+  if (p.user?.username === "Curated") return true;
+  if (!p.isCustom && !p._id && typeof p.id === "string" && p.id.startsWith("photo_")) return true;
+  return false;
+};
 
 import AddPhoto from "./AddPhoto";
 import ImageModal from "./ImageModal";
@@ -248,27 +254,41 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
     }
   }, [favorites]);
 
-  /* ── Photos (Loaded from dynamic localStorage, server, or curated defaults) ── */
+  /* ── Photos (100% Dynamic: Loaded strictly from user's uploads & backend DB) ── */
   const [photos, setPhotos] = useState(() => {
     try {
       const saved = localStorage.getItem("dynamic_photos");
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Check if user has uploaded custom photos
-          const defaultIds = new Set(defaultPhotos.map((dp) => dp.id));
-          const userCustomPhotos = parsed.filter((p) => p.isCustom || !defaultIds.has(p.id));
-          // Always ensure the updated 17 curated photos are present for the 5-column mosaic structure
-          return [...userCustomPhotos, ...defaultPhotos];
+          // Strictly keep ONLY user-uploaded dynamic photos — cut all static photos
+          const userOnlyPhotos = parsed.filter((p) => !isStaticPhoto(p));
+          return userOnlyPhotos;
         }
       }
-      return defaultPhotos;
+      return [];
     } catch {
-      return defaultPhotos;
+      return [];
     }
   });
 
   const [loadingBackend, setLoadingBackend] = useState(false);
+
+  // Purge any legacy static photos from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("dynamic_photos");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const userOnly = parsed.filter((p) => !isStaticPhoto(p));
+          localStorage.setItem("dynamic_photos", JSON.stringify(userOnly));
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
 
   // Sync to local storage
   useEffect(() => {
@@ -279,7 +299,7 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
     }
   }, [photos]);
 
-  // Fetch from server if logged in
+  // Fetch from server if logged in — strictly load user's own photos
   useEffect(() => {
     if (!token) return;
     const fetchPhotos = async () => {
@@ -311,10 +331,8 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                 })
               : "Recently Added",
           }));
-          // Prepend user uploads to curated defaults so the 5-column mosaic grid is always complete
-          const userPhotoIds = new Set(normalized.map((p) => p.id));
-          const baseDefaults = defaultPhotos.filter((dp) => !userPhotoIds.has(dp.id));
-          setPhotos([...normalized, ...baseDefaults]);
+          // Set photos to ONLY the user's photos from the database — zero static photos!
+          setPhotos(normalized);
         }
       } catch (err) {
         console.warn("Could not fetch remote photos, using local dynamic photos:", err);
@@ -667,29 +685,12 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
 
     if (selectedFilter === "Favorites") {
       list = photos.filter((p) => favorites.includes(p.id));
-    } else if (selectedFilter === "All Photos") {
+    } else if (selectedFilter === "All Photos" || selectedFilter.toLowerCase() === "my photos") {
       list = photos;
-    } else if (selectedFilter.toLowerCase() === "my photos") {
-      const myPhotosList = photos.filter(
-        (p) =>
-          (p.category || p.album || "").trim().toLowerCase() === "my photos" ||
-          p.isCustom ||
-          p.user?.username === user?.username ||
-          p.user?.username === "You"
-      );
-      if (myPhotosList.length === 0) {
-        list = photos;
-      } else {
-        // Prepend custom photos to the front, preserving the full 5-column mosaic structure
-        const myIds = new Set(myPhotosList.map((p) => p.id));
-        const remaining = photos.filter((p) => !myIds.has(p.id));
-        list = [...myPhotosList, ...remaining];
-      }
     } else {
-      const filtered = photos.filter(
+      list = photos.filter(
         (p) => (p.category || p.album || "").trim().toLowerCase() === selectedFilter.toLowerCase()
       );
-      list = filtered.length > 0 ? filtered : photos;
     }
 
     if (q) {
