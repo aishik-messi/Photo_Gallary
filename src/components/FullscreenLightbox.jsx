@@ -150,21 +150,61 @@ function FullscreenLightbox({
 
   /* ── 5. Fullscreen Toggle ── */
   const toggleFullscreen = useCallback(() => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen?.().catch(() => {});
+    const elem = containerRef.current || document.documentElement;
+    const isFs = Boolean(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement ||
+      isFullscreen
+    );
+
+    if (!isFs) {
+      if (elem?.requestFullscreen) {
+        elem.requestFullscreen().catch(() => setIsFullscreen(true));
+      } else if (elem?.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem?.mozRequestFullScreen) {
+        elem.mozRequestFullScreen();
+      } else if (elem?.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
       setIsFullscreen(true);
     } else {
-      document.exitFullscreen?.().catch(() => {});
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => setIsFullscreen(false));
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
       setIsFullscreen(false);
     }
-  }, []);
+  }, [isFullscreen]);
 
   useEffect(() => {
     const onFsChange = () => {
-      setIsFullscreen(Boolean(document.fullscreenElement));
+      setIsFullscreen(
+        Boolean(
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement
+        )
+      );
     };
     document.addEventListener("fullscreenchange", onFsChange);
-    return () => document.removeEventListener("fullscreenchange", onFsChange);
+    document.addEventListener("webkitfullscreenchange", onFsChange);
+    document.addEventListener("mozfullscreenchange", onFsChange);
+    document.addEventListener("MSFullscreenChange", onFsChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", onFsChange);
+      document.removeEventListener("webkitfullscreenchange", onFsChange);
+      document.removeEventListener("mozfullscreenchange", onFsChange);
+      document.removeEventListener("MSFullscreenChange", onFsChange);
+    };
   }, []);
 
   /* ── 6. Download Photo ── */
@@ -174,9 +214,11 @@ function FullscreenLightbox({
     const imgUrl = photo.image || photo.imageUrl;
     const safeTitle = (photo.title || "photo").replace(/[^a-zA-Z0-9_-]/g, "_");
 
+    showToast("Preparing download... ⬇️");
+
     try {
-      showToast("Preparing download...");
       const response = await fetch(imgUrl, { mode: "cors" });
+      if (!response.ok) throw new Error("CORS or fetch error");
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -185,10 +227,10 @@ function FullscreenLightbox({
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
-      showToast("Download started!");
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1500);
+      showToast("Download started! ⬇️");
     } catch {
-      // Fallback: direct anchor download
+      // Fallback: direct anchor download for mobile / CORS
       const link = document.createElement("a");
       link.href = imgUrl;
       link.download = `PhotoGallery_${safeTitle}.jpg`;
@@ -197,7 +239,7 @@ function FullscreenLightbox({
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast("Download started!");
+      showToast("Download started! ⬇️");
     }
   }, [photo, showToast]);
 
@@ -249,35 +291,6 @@ function FullscreenLightbox({
       document.body.style.paddingRight = originalPaddingRight;
     };
   }, [photo]);
-
-  /* ── 8b. Android Hardware / Gesture Back Button (History popstate) ── */
-  useEffect(() => {
-    if (!photo) return;
-
-    // Push entry to browser history so Android back button/swipe closes the lightbox
-    try {
-      window.history.pushState({ pgLightbox: true }, "");
-    } catch (e) {
-      console.warn("Could not push history state:", e);
-    }
-
-    const handlePopState = () => {
-      closeModal();
-    };
-
-    window.addEventListener("popstate", handlePopState);
-
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-      try {
-        if (window.history.state?.pgLightbox) {
-          window.history.back();
-        }
-      } catch (e) {
-        console.warn("Could not pop history state:", e);
-      }
-    };
-  }, [photo, closeModal]);
 
   /* ── 9. Reset Zoom/Pan on image change ── */
   useEffect(() => {
@@ -524,12 +537,12 @@ function FullscreenLightbox({
       <header className="pg-lb-topbar" onClick={(e) => e.stopPropagation()}>
         {/* Left Section: Back Cross Button, Counter, Slideshow, Info Toggle */}
         <div className="pg-lb-topbar-left">
-          {/* Back Cross (X) Button - Always visible, first element, ideal for Android & mobile */}
+          {/* Back Cross (X) Button - Always pinned on the left for Android & Mobile */}
           <button
             type="button"
             className="pg-lb-btn pg-lb-btn-icon pg-lb-btn--back-cross"
             onClick={closeModal}
-            title="Back / Close (Esc)"
+            title="Back to gallery (Esc)"
             aria-label="Back to gallery"
           >
             <X size={20} />
@@ -571,12 +584,12 @@ function FullscreenLightbox({
           </button>
         </div>
 
-        {/* Right Section: Zoom (desktop), Fullscreen (desktop), Download, Share, Favorite, Delete, Close */}
+        {/* Right Section: Zoom, Fullscreen, Download, Share, Favorite, Delete, Close */}
         <div className="pg-lb-topbar-right">
-          {/* Zoom Out - Desktop */}
+          {/* Zoom Out */}
           <button
             type="button"
-            className="pg-lb-btn pg-lb-btn-icon pg-lb-desktop-only"
+            className="pg-lb-btn pg-lb-btn-icon"
             onClick={zoomOut}
             disabled={zoom <= 1}
             title="Zoom Out (-)"
@@ -585,10 +598,10 @@ function FullscreenLightbox({
             <ZoomOut size={17} />
           </button>
 
-          {/* Zoom Percentage / Reset - Desktop */}
+          {/* Zoom Percentage / Reset */}
           <button
             type="button"
-            className={`pg-lb-zoom-pill pg-lb-desktop-only ${zoom > 1 ? "is-zoomed" : ""}`}
+            className={`pg-lb-zoom-pill ${zoom > 1 ? "is-zoomed" : ""}`}
             onClick={resetZoom}
             title="Reset Zoom (0 or R)"
             aria-label="Reset zoom"
@@ -597,10 +610,10 @@ function FullscreenLightbox({
             {zoom > 1 && <RotateCcw size={13} className="pg-lb-rotate-icon" />}
           </button>
 
-          {/* Zoom In - Desktop */}
+          {/* Zoom In */}
           <button
             type="button"
-            className="pg-lb-btn pg-lb-btn-icon pg-lb-desktop-only"
+            className="pg-lb-btn pg-lb-btn-icon"
             onClick={zoomIn}
             disabled={zoom >= 4}
             title="Zoom In (+)"
@@ -609,12 +622,12 @@ function FullscreenLightbox({
             <ZoomIn size={17} />
           </button>
 
-          <div className="pg-lb-divider pg-lb-desktop-only" />
+          <div className="pg-lb-divider" />
 
-          {/* Fullscreen Toggle - Desktop */}
+          {/* Fullscreen Toggle */}
           <button
             type="button"
-            className="pg-lb-btn pg-lb-btn-icon pg-lb-desktop-only"
+            className="pg-lb-btn pg-lb-btn-icon"
             onClick={toggleFullscreen}
             title={isFullscreen ? "Exit Fullscreen (F)" : "Enter Fullscreen (F)"}
             aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
@@ -675,12 +688,12 @@ function FullscreenLightbox({
             </button>
           )}
 
-          <div className="pg-lb-divider pg-lb-desktop-only" />
+          <div className="pg-lb-divider" />
 
-          {/* Close X Button (Desktop) */}
+          {/* Close X Button */}
           <button
             type="button"
-            className="pg-lb-btn pg-lb-btn-icon pg-lb-btn--close pg-lb-desktop-only"
+            className="pg-lb-btn pg-lb-btn-icon pg-lb-btn--close"
             onClick={closeModal}
             title="Close Viewer (Esc)"
             aria-label="Close image viewer"
