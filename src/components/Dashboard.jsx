@@ -257,15 +257,9 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
         if (Array.isArray(parsed) && parsed.length > 0) {
           // Check if user has uploaded custom photos
           const defaultIds = new Set(defaultPhotos.map((dp) => dp.id));
-          const userCustomPhotos = parsed.filter((p) => !defaultIds.has(p.id));
-          // If only old defaults (length < 17 and no custom uploads), use the full 17 new defaults
-          if (userCustomPhotos.length === 0 && parsed.length < defaultPhotos.length) {
-            return defaultPhotos;
-          }
-          // Backfill missing default photos to keep the 5-column mosaic rhythm complete
-          const existingIds = new Set(parsed.map((p) => p.id));
-          const missingDefaults = defaultPhotos.filter((dp) => !existingIds.has(dp.id));
-          return [...parsed, ...missingDefaults];
+          const userCustomPhotos = parsed.filter((p) => p.isCustom || !defaultIds.has(p.id));
+          // Always ensure the updated 17 curated photos are present for the 5-column mosaic structure
+          return [...userCustomPhotos, ...defaultPhotos];
         }
       }
       return defaultPhotos;
@@ -303,7 +297,9 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
           const normalized = data.map((p) => ({
             ...p,
             id: p._id || p.id,
+            isCustom: true,
             image: resolveImage(p.imageUrl || p.image),
+            imageUrl: resolveImage(p.imageUrl || p.image),
             category: p.category || "My Photos",
             album: p.category || "My Photos",
             location: p.location || "",
@@ -315,7 +311,10 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                 })
               : "Recently Added",
           }));
-          setPhotos(normalized);
+          // Prepend user uploads to curated defaults so the 5-column mosaic grid is always complete
+          const userPhotoIds = new Set(normalized.map((p) => p.id));
+          const baseDefaults = defaultPhotos.filter((dp) => !userPhotoIds.has(dp.id));
+          setPhotos([...normalized, ...baseDefaults]);
         }
       } catch (err) {
         console.warn("Could not fetch remote photos, using local dynamic photos:", err);
@@ -678,11 +677,19 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
           p.user?.username === user?.username ||
           p.user?.username === "You"
       );
-      list = myPhotosList.length > 0 ? myPhotosList : photos;
+      if (myPhotosList.length === 0) {
+        list = photos;
+      } else {
+        // Prepend custom photos to the front, preserving the full 5-column mosaic structure
+        const myIds = new Set(myPhotosList.map((p) => p.id));
+        const remaining = photos.filter((p) => !myIds.has(p.id));
+        list = [...myPhotosList, ...remaining];
+      }
     } else {
-      list = photos.filter(
+      const filtered = photos.filter(
         (p) => (p.category || p.album || "").trim().toLowerCase() === selectedFilter.toLowerCase()
       );
+      list = filtered.length > 0 ? filtered : photos;
     }
 
     if (q) {
