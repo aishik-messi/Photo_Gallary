@@ -56,6 +56,45 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
   const [selectedFilter, setSelectedFilter] = useState("All Photos");
   const [search, setSearch] = useState("");
 
+  /* ── Animated Search Bar Hint Cycle & Focus State ── */
+  const SEARCH_HINTS = [
+    "Search photos, albums...",
+    "Try 'Nature' or 'Travel'...",
+    "Search by title or tags...",
+    "Search 'Portraits', 'Art'...",
+    "Search by location...",
+  ];
+  const [hintIndex, setHintIndex] = useState(0);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchInputRef = useRef(null);
+
+  useEffect(() => {
+    if (isSearchFocused || search) return;
+    const interval = setInterval(() => {
+      setHintIndex((prev) => (prev + 1) % SEARCH_HINTS.length);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, [isSearchFocused, search]);
+
+  /* Keyboard shortcut: Ctrl+K or / to focus search */
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      } else if (
+        e.key === "/" &&
+        document.activeElement?.tagName !== "INPUT" &&
+        document.activeElement?.tagName !== "TEXTAREA"
+      ) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   /* ── Custom & Deleted Categories ── */
   const [customCategories, setCustomCategories] = useState(() => getSavedCustomCategories());
   const [deletedCategories, setDeletedCategories] = useState(() => getDeletedCategories());
@@ -853,22 +892,49 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
 
           {/* Right Controls: Search, Bell, User Avatar */}
           <div className="nd-topbar-controls">
-            {/* Search Input */}
-            <div className="nd-search-box">
-              <span className="nd-search-icon">🔍</span>
+            {/* Animated Interactive Search Input */}
+            <div
+              className={`nd-search-box ${isSearchFocused ? "nd-search-box--focused" : ""} ${search ? "nd-search-box--active" : ""}`}
+            >
+              <div className="nd-search-icon-wrap">
+                <span className="nd-search-icon">🔍</span>
+                {isSearchFocused && <span className="nd-search-icon-glow" />}
+              </div>
               <input
+                ref={searchInputRef}
                 type="text"
                 className="nd-search-input"
-                placeholder="Search..."
+                placeholder={SEARCH_HINTS[hintIndex]}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
                 id="search-input"
+                aria-label="Search photos"
               />
+              {!search && !isSearchFocused && (
+                <span className="nd-search-shortcut" title="Press Ctrl+K or / to search">
+                  ⌘K
+                </span>
+              )}
+              {search && (
+                <span
+                  className="nd-search-count-badge"
+                  title={`${displayedPhotos.length} photo${displayedPhotos.length !== 1 ? "s" : ""} found`}
+                >
+                  {displayedPhotos.length}
+                </span>
+              )}
               {search && (
                 <button
                   className="nd-search-clear"
-                  onClick={() => setSearch("")}
+                  onClick={() => {
+                    setSearch("");
+                    searchInputRef.current?.focus();
+                  }}
                   type="button"
+                  title="Clear search"
+                  aria-label="Clear search"
                 >
                   ✕
                 </button>
