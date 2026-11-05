@@ -83,6 +83,9 @@ router.post('/', auth, upload.single('image'), async (req, res) => {
 // @desc    Like/Unlike a photo
 router.put('/:id/like', auth, async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(200).json({ msg: 'Curated photo like acknowledged' });
+    }
     const photo = await Photo.findById(req.params.id);
 
     if (!photo) {
@@ -110,6 +113,9 @@ router.put('/:id/like', auth, async (req, res) => {
 // @desc    Delete a photo
 router.delete('/:id', auth, async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(200).json({ msg: 'Curated photo deleted locally' });
+    }
     const photo = await Photo.findById(req.params.id);
 
     if (!photo) {
