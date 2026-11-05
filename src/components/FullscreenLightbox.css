@@ -150,6 +150,22 @@
   color: #FFFFFF !important;
 }
 
+/* Dedicated Back Cross button (top-left) - Primary close option for Android & Mobile */
+.pg-lb-btn--back-cross {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+}
+
+.pg-lb-btn--back-cross:hover {
+  background: rgba(239, 68, 68, 0.85) !important;
+  border-color: #EF4444 !important;
+  color: #FFFFFF !important;
+  transform: scale(1.06);
+}
+
 .pg-lb-like-count {
   font-size: 12px;
   margin-left: 2px;
@@ -605,8 +621,35 @@
 /* ── Responsive Mobile & Tablet Adaptations ── */
 @media (max-width: 768px) {
   .pg-lb-topbar {
-    padding: 10px 14px;
+    padding: 10px 12px;
     gap: 8px;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .pg-lb-topbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pg-lb-topbar-left,
+  .pg-lb-topbar-right {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  /* Dedicated prominent Back Cross button on mobile */
+  .pg-lb-btn--back-cross {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+  }
+
+  /* Hide desktop-only zoom and fullscreen controls on mobile (pinch-zoom is native) */
+  .pg-lb-desktop-only {
+    display: none !important;
   }
 
   .pg-lb-btn-text {
@@ -615,28 +658,28 @@
 
   .pg-lb-counter {
     padding: 4px 10px;
-    font-size: 12px;
-  }
-
-  .pg-lb-zoom-pill span {
-    font-size: 11px;
-  }
-
-  .pg-lb-divider {
-    margin: 0 2px;
+    font-size: 12.5px;
+    height: 38px;
+    box-sizing: border-box;
   }
 
   .pg-lb-btn {
-    height: 34px;
+    height: 38px;
     padding: 0 10px;
   }
 
   .pg-lb-btn-icon {
-    width: 34px;
+    width: 38px;
+    height: 38px;
   }
 
   .pg-lb-stage {
-    padding: 8px 12px;
+    padding: 8px 10px;
+  }
+
+  .pg-lb-img {
+    max-width: 95vw;
+    max-height: calc(100vh - 170px);
   }
 
   .pg-lb-nav {
@@ -645,17 +688,17 @@
   }
 
   .pg-lb-nav--prev {
-    left: 12px;
+    left: 8px;
   }
 
   .pg-lb-nav--next {
-    right: 12px;
+    right: 8px;
   }
 
   .pg-lb-info-card {
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
     max-width: none;
     padding: 12px 14px;
   }
@@ -665,15 +708,16 @@
   }
 
   .pg-lb-thumb-btn {
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
   }
 
   .pg-lb-strip-wrap {
-    padding: 8px 12px;
+    padding: 8px 10px;
   }
 
   .pg-lb-toast {
-    bottom: 80px;
+    bottom: 76px;
   }
 }
+

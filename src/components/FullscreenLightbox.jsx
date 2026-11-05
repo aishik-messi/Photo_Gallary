@@ -250,6 +250,35 @@ function FullscreenLightbox({
     };
   }, [photo]);
 
+  /* ── 8b. Android Hardware / Gesture Back Button (History popstate) ── */
+  useEffect(() => {
+    if (!photo) return;
+
+    // Push entry to browser history so Android back button/swipe closes the lightbox
+    try {
+      window.history.pushState({ pgLightbox: true }, "");
+    } catch (e) {
+      console.warn("Could not push history state:", e);
+    }
+
+    const handlePopState = () => {
+      closeModal();
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      try {
+        if (window.history.state?.pgLightbox) {
+          window.history.back();
+        }
+      } catch (e) {
+        console.warn("Could not pop history state:", e);
+      }
+    };
+  }, [photo, closeModal]);
+
   /* ── 9. Reset Zoom/Pan on image change ── */
   useEffect(() => {
     resetZoom();
@@ -493,8 +522,19 @@ function FullscreenLightbox({
     >
       {/* ── TOP GLASS CONTROLS BAR ──────────────────────────── */}
       <header className="pg-lb-topbar" onClick={(e) => e.stopPropagation()}>
-        {/* Left Section: Counter, Slideshow, Info Toggle */}
+        {/* Left Section: Back Cross Button, Counter, Slideshow, Info Toggle */}
         <div className="pg-lb-topbar-left">
+          {/* Back Cross (X) Button - Always visible, first element, ideal for Android & mobile */}
+          <button
+            type="button"
+            className="pg-lb-btn pg-lb-btn-icon pg-lb-btn--back-cross"
+            onClick={closeModal}
+            title="Back / Close (Esc)"
+            aria-label="Back to gallery"
+          >
+            <X size={20} />
+          </button>
+
           <div className="pg-lb-counter" title="Current photo position">
             <span className="pg-lb-counter-current">{activeIndex + 1}</span>
             <span className="pg-lb-counter-sep">/</span>
@@ -531,12 +571,12 @@ function FullscreenLightbox({
           </button>
         </div>
 
-        {/* Right Section: Zoom, Fullscreen, Download, Share, Favorite, Delete, Close */}
+        {/* Right Section: Zoom (desktop), Fullscreen (desktop), Download, Share, Favorite, Delete, Close */}
         <div className="pg-lb-topbar-right">
-          {/* Zoom Out */}
+          {/* Zoom Out - Desktop */}
           <button
             type="button"
-            className="pg-lb-btn pg-lb-btn-icon"
+            className="pg-lb-btn pg-lb-btn-icon pg-lb-desktop-only"
             onClick={zoomOut}
             disabled={zoom <= 1}
             title="Zoom Out (-)"
@@ -545,10 +585,10 @@ function FullscreenLightbox({
             <ZoomOut size={17} />
           </button>
 
-          {/* Zoom Percentage / Reset */}
+          {/* Zoom Percentage / Reset - Desktop */}
           <button
             type="button"
-            className={`pg-lb-zoom-pill ${zoom > 1 ? "is-zoomed" : ""}`}
+            className={`pg-lb-zoom-pill pg-lb-desktop-only ${zoom > 1 ? "is-zoomed" : ""}`}
             onClick={resetZoom}
             title="Reset Zoom (0 or R)"
             aria-label="Reset zoom"
@@ -557,10 +597,10 @@ function FullscreenLightbox({
             {zoom > 1 && <RotateCcw size={13} className="pg-lb-rotate-icon" />}
           </button>
 
-          {/* Zoom In */}
+          {/* Zoom In - Desktop */}
           <button
             type="button"
-            className="pg-lb-btn pg-lb-btn-icon"
+            className="pg-lb-btn pg-lb-btn-icon pg-lb-desktop-only"
             onClick={zoomIn}
             disabled={zoom >= 4}
             title="Zoom In (+)"
@@ -569,12 +609,12 @@ function FullscreenLightbox({
             <ZoomIn size={17} />
           </button>
 
-          <div className="pg-lb-divider" />
+          <div className="pg-lb-divider pg-lb-desktop-only" />
 
-          {/* Fullscreen Toggle */}
+          {/* Fullscreen Toggle - Desktop */}
           <button
             type="button"
-            className="pg-lb-btn pg-lb-btn-icon"
+            className="pg-lb-btn pg-lb-btn-icon pg-lb-desktop-only"
             onClick={toggleFullscreen}
             title={isFullscreen ? "Exit Fullscreen (F)" : "Enter Fullscreen (F)"}
             aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
@@ -635,12 +675,12 @@ function FullscreenLightbox({
             </button>
           )}
 
-          <div className="pg-lb-divider" />
+          <div className="pg-lb-divider pg-lb-desktop-only" />
 
-          {/* Close X Button */}
+          {/* Close X Button (Desktop) */}
           <button
             type="button"
-            className="pg-lb-btn pg-lb-btn-icon pg-lb-btn--close"
+            className="pg-lb-btn pg-lb-btn-icon pg-lb-btn--close pg-lb-desktop-only"
             onClick={closeModal}
             title="Close Viewer (Esc)"
             aria-label="Close image viewer"
@@ -835,3 +875,4 @@ function FullscreenLightbox({
 }
 
 export default FullscreenLightbox;
+
