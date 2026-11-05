@@ -165,7 +165,6 @@ function Navbar({
             </div>
             <div className="nav-mobile-user-info">
               <span className="nav-mobile-username">{user.username}</span>
-              <span className="nav-mobile-email">{user.email}</span>
             </div>
           </div>
         ) : null}

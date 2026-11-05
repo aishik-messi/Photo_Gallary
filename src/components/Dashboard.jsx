@@ -1025,7 +1025,6 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
                     />
                     <div className="nd-summary-info">
                       <span className="nd-summary-name">{user?.username || "Guest User"}</span>
-                      <span className="nd-summary-email">{user?.email || "Local Dynamic Gallery"}</span>
                     </div>
                   </div>
                   <div className="nd-menu-divider" />
