@@ -628,17 +628,6 @@
     border-radius: 999px;
   }
 
-  /* Pinned sticky Back Cross button on mobile: ALWAYS VISIBLE ON TOP-LEFT */
-  .pg-lb-btn--back-cross {
-    position: sticky;
-    left: 0;
-    z-index: 35;
-    background: rgba(26, 31, 40, 0.95) !important;
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.35) !important;
-    box-shadow: 4px 0 12px rgba(0, 0, 0, 0.65);
-    flex-shrink: 0;
-  }
 
   .pg-lb-topbar-left,
   .pg-lb-topbar-right {

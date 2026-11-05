@@ -535,19 +535,8 @@ function FullscreenLightbox({
     >
       {/* ── TOP GLASS CONTROLS BAR ──────────────────────────── */}
       <header className="pg-lb-topbar" onClick={(e) => e.stopPropagation()}>
-        {/* Left Section: Back Cross Button, Counter, Slideshow, Info Toggle */}
+        {/* Left Section: Counter, Slideshow, Info Toggle */}
         <div className="pg-lb-topbar-left">
-          {/* Back Cross (X) Button - Always pinned on the left for Android & Mobile */}
-          <button
-            type="button"
-            className="pg-lb-btn pg-lb-btn-icon pg-lb-btn--back-cross"
-            onClick={closeModal}
-            title="Back to gallery (Esc)"
-            aria-label="Back to gallery"
-          >
-            <X size={20} />
-          </button>
-
           <div className="pg-lb-counter" title="Current photo position">
             <span className="pg-lb-counter-current">{activeIndex + 1}</span>
             <span className="pg-lb-counter-sep">/</span>
