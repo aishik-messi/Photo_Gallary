@@ -1,137 +1,37 @@
+import FullscreenLightbox from "./FullscreenLightbox";
+
+/**
+ * ImageModal wraps the modern FullscreenLightbox component.
+ * Provides backwards compatibility for any legacy callers while
+ * delivering the full-featured fullscreen photography lightbox experience.
+ */
 function ImageModal({
   photo,
-  photos,
-  currentIndex,
+  photos = [],
+  currentIndex = 0,
   closeModal,
   nextPhoto,
   previousPhoto,
-  favorites,
+  onSelectIndex,
+  favorites = [],
   toggleFavorite,
   onDeletePhoto,
 }) {
-
-  if (!photo) {
-    return null;
-  }
-
-  const isFavorite = favorites.includes(photo.id);
-  const baseLikes = typeof photo.likesCount === "number"
-    ? photo.likesCount
-    : (Array.isArray(photo.likes) ? photo.likes.length : (photo.initialLikes || 0));
-  const likeCount = baseLikes + (isFavorite && !Array.isArray(photo.likes) ? 1 : 0);
+  if (!photo) return null;
 
   return (
-
-    <div
-      className="modal-overlay"
-      onClick={closeModal}
-    >
-
-      <div
-        className="image-modal"
-        onClick={(e) =>
-          e.stopPropagation()
-        }
-      >
-
-        {/* Close Button */}
-        <button
-          className="close-button"
-          onClick={closeModal}
-        >
-          ✕
-        </button>
-
-
-        {/* Previous Button */}
-        <button
-          className="modal-nav previous"
-          onClick={previousPhoto}
-        >
-          ❮
-        </button>
-
-
-        {/* Image */}
-        <img
-          className="modal-image"
-          src={photo.image}
-          alt={photo.title}
-        />
-
-
-        {/* Next Button */}
-        <button
-          className="modal-nav next"
-          onClick={nextPhoto}
-        >
-          ❯
-        </button>
-
-
-        {/* Information */}
-        <div className="modal-info">
-
-          <div>
-
-            <h2>
-              {photo.title}
-            </h2>
-
-            <p>
-              {photo.category} {photo.location && `• 📍 ${photo.location}`} • Photo{" "}
-              {currentIndex + 1} of{" "}
-              {photos.length}
-            </p>
-
-          </div>
-
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            {/* Delete button */}
-            {onDeletePhoto && (
-              <button
-                className="modal-delete-btn"
-                title="Delete photo"
-                onClick={() => onDeletePhoto(photo.id)}
-                style={{
-                  background: "rgba(239, 68, 68, 0.15)",
-                  border: "1px solid rgba(239, 68, 68, 0.3)",
-                  color: "#ef4444",
-                  borderRadius: "50%",
-                  width: "38px",
-                  height: "38px",
-                  cursor: "pointer",
-                  fontSize: "16px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                🗑️
-              </button>
-            )}
-
-            {/* Favorite */}
-            <button
-              className={`modal-like ${
-                isFavorite ? "liked" : ""
-              }`}
-              onClick={() =>
-                toggleFavorite(photo.id)
-              }
-              title={isFavorite ? "Remove favorite" : "Add to favorites"}
-              type="button"
-            >
-              <span>{isFavorite ? "❤️" : "🤍"}</span>
-              <span className="modal-like-count">{likeCount}</span>
-            </button>
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
+    <FullscreenLightbox
+      photo={photo}
+      photos={photos}
+      currentIndex={currentIndex}
+      closeModal={closeModal}
+      nextPhoto={nextPhoto}
+      previousPhoto={previousPhoto}
+      onSelectIndex={onSelectIndex}
+      favorites={favorites}
+      toggleFavorite={toggleFavorite}
+      onDeletePhoto={onDeletePhoto}
+    />
   );
 }
 

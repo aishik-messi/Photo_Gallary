@@ -492,8 +492,13 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const getActivePhotoList = () => {
+    return displayedPhotos && displayedPhotos.length > 0 ? displayedPhotos : photos;
+  };
+
   const openPhotoModal = (photo) => {
-    const idx = photos.findIndex((p) => p.id === photo.id);
+    const list = getActivePhotoList();
+    const idx = list.findIndex((p) => p.id === photo.id);
     setSelectedPhoto(photo);
     setCurrentIndex(idx >= 0 ? idx : 0);
   };
@@ -501,17 +506,27 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
   const closeModal = () => setSelectedPhoto(null);
 
   const nextPhoto = () => {
-    if (!photos.length) return;
-    const idx = (currentIndex + 1) % photos.length;
+    const list = getActivePhotoList();
+    if (!list.length) return;
+    const idx = (currentIndex + 1) % list.length;
     setCurrentIndex(idx);
-    setSelectedPhoto(photos[idx]);
+    setSelectedPhoto(list[idx]);
   };
 
   const previousPhoto = () => {
-    if (!photos.length) return;
-    const idx = (currentIndex - 1 + photos.length) % photos.length;
+    const list = getActivePhotoList();
+    if (!list.length) return;
+    const idx = (currentIndex - 1 + list.length) % list.length;
     setCurrentIndex(idx);
-    setSelectedPhoto(photos[idx]);
+    setSelectedPhoto(list[idx]);
+  };
+
+  const selectPhotoByIndex = (idx) => {
+    const list = getActivePhotoList();
+    if (idx >= 0 && idx < list.length) {
+      setCurrentIndex(idx);
+      setSelectedPhoto(list[idx]);
+    }
   };
 
   /* ── Handlers ── */
@@ -1833,16 +1848,17 @@ function Dashboard({ darkMode, toggleDarkMode, onGoToLanding }) {
       {/* ── PROFILE MODAL ─────────────────────────────────── */}
       <ProfileModal isOpen={profileOpen} onClose={() => setProfileOpen(false)} />
 
-      {/* ── IMAGE LIGHTBOX MODAL ─────────────────────────── */}
+      {/* ── FULLSCREEN IMAGE LIGHTBOX ─────────────────────── */}
       <ImageModal
         photo={selectedPhoto}
-        photos={photos}
+        photos={displayedPhotos && displayedPhotos.length > 0 ? displayedPhotos : photos}
         currentIndex={currentIndex}
         closeModal={closeModal}
         nextPhoto={nextPhoto}
         previousPhoto={previousPhoto}
+        onSelectIndex={selectPhotoByIndex}
         favorites={favorites}
-        toggleFavorite={(id) => toggleFavorite(id)}
+        toggleFavorite={(id, e) => toggleFavorite(id, e)}
         onDeletePhoto={handleDeletePhoto}
       />
     </div>
